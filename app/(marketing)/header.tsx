@@ -23,7 +23,7 @@ export const Header = () => {
                         <UserButton />
                     </SignedIn>
                     <SignedOut>
-                        <SignInButton mode="modal" fallbackRedirectUrl={"/buttons"}>
+                        <SignInButton mode="modal" fallbackRedirectUrl={"/home"}>
                             <Button size={"lg"} variant={"ghost"}>
                                 Sign In
                             </Button>
