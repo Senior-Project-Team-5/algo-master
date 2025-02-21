@@ -85,7 +85,7 @@ export const UnitButton = ({ id, index, totalCount, topic_name, section_id, lock
                             {locked ? (
                                 <Button
                                     size={"rounded"} 
-                                    variant="danger"
+                                    variant="locked"
                                     className="h-[70px] w-[70px] border-b-8 cursor-not-allowed"
                                     disabled
                                 >
