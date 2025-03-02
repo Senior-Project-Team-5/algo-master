@@ -2,7 +2,9 @@
 FROM node:16-alpine AS deps
 WORKDIR /app
 COPY package.json package-lock.json ./
-RUN npm ci
+
+# Use --legacy-peer-deps to bypass dependency issues
+RUN npm ci --legacy-peer-deps
 
 # Rebuild the source code only when needed
 FROM node:16-alpine AS builder
