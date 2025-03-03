@@ -11,6 +11,13 @@ FROM node:20-alpine AS builder
 WORKDIR /app
 COPY . .
 COPY --from=deps /app/node_modules ./node_modules
+
+# Public environment variables
+ENV NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_ZGl2aW5lLWFwaGlkLTE1LmNsZXJrLmFjY291bnRzLmRldiQ
+ENV NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
+ENV NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up
+ENV NEXT_PUBLIC_APP_URL=https://algo-master-ar72sp7yfa-uc.a.run.app
+
 RUN npm run build
 
 # Production image, copy all the files and run next
