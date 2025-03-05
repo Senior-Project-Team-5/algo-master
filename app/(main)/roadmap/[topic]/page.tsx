@@ -35,10 +35,10 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
 interface QuizItem {
-  question: string;
+  question_no_code: string;
   choices: string[];
   answer: string;
-  explanation: string;
+  resources: string;
 }
 
 const topic: React.FC = () => {

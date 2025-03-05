@@ -10,30 +10,87 @@ export async function POST(req) {
     }
     // Structure of the reponse from GEMINI
     const generationConfig = {
-        temperature: 1,
-        top_p: 0.95,
-        top_k: 40,
-        max_output_tokens: 8192,
-        response_schema: {
-          type: "array",
-          items: {
-            type: "object",
-            required: ["question", "choices", "answer", "explanation"],
-            properties: {
-              "question": { type: "string" },
-              choices: {
-                type: "array",
-                items: {
-                  type: "string"
-                },
-              },
-              answer: { type: "string" },
-              explanation: { type: "string" },
+      temperature: 1,
+      top_p: 0.95,
+      top_k: 40,
+      max_output_tokens: 8192,
+      response_schema: {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "question_no_code": {
+              "type": "string"
             },
+            "code-only": {
+              "type": "string"
+            },
+            "choices": {
+              "type": "object",
+              "properties": {
+                "A": {
+                  "type": "object",
+                  "properties": {
+                    "answer": {
+                      "type": "string"
+                    },
+                    "explanation": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "B": {
+                  "type": "object",
+                  "properties": {
+                    "answer": {
+                      "type": "string"
+                    },
+                    "explanation": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "C": {
+                  "type": "object",
+                  "properties": {
+                    "answer": {
+                      "type": "string"
+                    },
+                    "explanation": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "D": {
+                  "type": "object",
+                  "properties": {
+                    "answer": {
+                      "type": "string"
+                    },
+                    "explanation": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            },
+            "answer": {
+              "type": "string"
+            },
+            "resources": {
+              "type": "string"
+            }
           },
-        },
-        response_mime_type: "application/json",
-      };
+          "required": [
+            "question_no_code",
+            "choices",
+            "answer",
+            "resources"
+          ]
+        }
+      },
+      response_mime_type: "application/json",
+    };
     const genAI = new GoogleGenerativeAI(apiKey);
     const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash", generationConfig  });
 
