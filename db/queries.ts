@@ -50,3 +50,24 @@ export const getTopics = cache(async () => {
 
     return data
 })
+
+// export const getTopTenUsers = cache(async () => {
+//     const { userId } = await auth();
+  
+//     if (!userId) {
+//       return [];
+//     }
+  
+//     const data = await db.query.userProgressTable.findMany({
+//       orderBy: (userProgressTable, { desc }) => [desc(userProgressTable.points)],
+//       limit: 10,
+//       columns: {
+//         userId: true,
+//         userName: true,
+//         userImageSrc: true,
+//         points: true,
+//       },
+//     });
+  
+//     return data;
+//   });
