@@ -94,7 +94,7 @@ export const UnitButton = ({ id, index, totalCount, topic_name, section_id, lock
                                     />
                                 </Button>
                             ) : (
-                                <Link href={`/quiz/${encodeURIComponent(topic_name)}`}>
+                                <Link href={`/roadmap/${encodeURIComponent(topic_name)}`}>
                                     <Button
                                         size={"rounded"} 
                                         variant="secondary"
