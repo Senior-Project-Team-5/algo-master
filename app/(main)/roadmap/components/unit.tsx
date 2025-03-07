@@ -46,7 +46,8 @@ export const Unit = async ({ id, topic_name }: Props) => {
                             topic_name={topic.topic_name}
                             section_id={topic.section_id} 
                             locked={isLocked}
-                            pointsEarned={currentProgress?.points ?? 0}
+                            // pointsEarned={currentProgress?.points ?? 0}
+                            pointsEarned={0}
                         />
                     );
                 })}
