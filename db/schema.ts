@@ -1,5 +1,14 @@
 import { sql } from "drizzle-orm";
-import { integer, pgTable, varchar, text, boolean, date, pgEnum } from "drizzle-orm/pg-core";
+import { integer, pgTable, varchar, text, boolean, date, pgEnum, uuid, vector } from "drizzle-orm/pg-core";
+
+
+
+export const documents = pgTable('documents', {
+    id: uuid('id').primaryKey().defaultRandom(),
+    content: text('content').notNull(),
+    embedding: vector('embedding', { dimensions: 768 }) // Match embedding model dimensions
+  });
+
 
 /*
 Database to store topics for the roadmap quizzes and enable prerequisites for each topic
