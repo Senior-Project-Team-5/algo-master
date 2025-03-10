@@ -1,0 +1,34 @@
+.question {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.question-question {
+  font-size: 30px;
+}
+
+.question-code {
+  margin-top: 40px;
+  margin-bottom: 40px;
+}
+
+.question-choice {
+  margin-bottom: 10px;
+}
+
+.question-post {
+  display: flex;
+  background-color: aliceblue;
+  align-items: center;
+  position: fixed;
+  bottom: 0;
+  margin-bottom: 100px;
+  padding: 50px;
+  border-radius: 10px;
+}
+
+.question-post-text {
+  margin-right: 50px;
+}
