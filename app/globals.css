@@ -76,3 +76,8 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+.progress-sub {
+  @apply text-xl; 
+  
+}

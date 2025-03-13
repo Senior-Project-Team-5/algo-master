@@ -33,27 +33,41 @@ import Prequiz from "./components/Prequiz/Prequiz";
 import Quiz from "./components/Quiz/Quiz";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import Postquiz from "./components/Postquiz/Postquiz";
 
-interface QuizItem {
-  question: string;
-  choices: string[];
-  answer: string;
+interface MultipleChoice {
+  choice: string;
   explanation: string;
 }
 
+interface QuizItem {
+  question: string;
+  choices: MultipleChoice[];
+  answer: string;
+  resources: string;
+  code: string;
+}
+
 const topic: React.FC = () => {
-  const { topic } = useParams<{topic : string}>(); // Get dynamic route parameter
+  const { topic } = useParams<{ topic: string }>(); // Get dynamic route parameter
   const [quiz, setQuiz] = useState<QuizItem[]>([]);
-  const [startQuiz, setStartQuiz] = useState(false);
+  const [quizStatus, setQuizStatus] = useState<number>(0); // 0: not started, 1: start quiz, 2: ended quiz
+  const [language, setLanguage] = useState<string>("python");
 
   // Function to get the quiz from GEMINI
   const fetchQuiz = async () => {
     try {
       const response = await fetch("/api/generateQuiz", {
         method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ language }),
       });
       const data = await response.json();
-      const questions = JSON.parse(data.response.candidates[0].content.parts[0].text);
+      const questions = JSON.parse(
+        data.response.candidates[0].content.parts[0].text
+      );
       console.log(questions);
       setQuiz(questions);
     } catch (error) {
@@ -64,16 +78,44 @@ const topic: React.FC = () => {
   // Runs immediately when the page is being rendered
   useEffect(() => {
     fetchQuiz();
-  }, []);
+  }, [language]);
 
   return (
     <>
-      {!startQuiz && <div>
-        <Prequiz topic={topic} />
-        <Button variant="primary" onClick={() => setStartQuiz(true)}>Start </Button>
-      </div>}
+      {quizStatus == 0 && (
+        <div>
+          <Prequiz topic={topic} />
+          <Button
+            disabled={quiz.length == 0}
+            onClick={() => {
+              setQuiz([]);
+              setLanguage("C++");
+            }}
+          >
+            C++
+          </Button>
+          <Button
+            disabled={quiz.length == 0}
+            onClick={() => {
+              setQuiz([]);
+              setLanguage("Python");
+            }}
+          >
+            Python
+          </Button>
+          <Button
+            variant="primary"
+            disabled={quiz.length == 0}
+            onClick={() => setQuizStatus(1)}
+          >
+            Start{" "}
+          </Button>
+        </div>
+      )}
 
-      {startQuiz && <Quiz quiz={quiz }/>}
+      {quizStatus == 1 && <Quiz quiz={quiz} setQuizStatus={setQuizStatus} />}
+
+      {quizStatus == 2 && <Postquiz />}
     </>
   );
 };
