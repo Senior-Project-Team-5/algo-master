@@ -1,16 +1,21 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { NextRequest, NextResponse } from "next/server";
+import { GoogleGenerativeAI, GenerativeModel } from "@google/generative-ai";
 
-export async function POST(req) {
-  const { language } = await req.json();
+interface RequestBody {
+  language: string;
+}
+
+export async function POST(req: NextRequest): Promise<NextResponse> {
+  const { language }: RequestBody = await req.json();
   console.log(language);
+  
   try {
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) {
-      return new Response(JSON.stringify({ error: "Missing GEMINI_API_KEY" }), {
-        status: 500,
-      });
+      return NextResponse.json({ error: "Missing GEMINI_API_KEY" }, { status: 500 });
     }
-    // Structure of the reponse from GEMINI
+    
+    // Structure of the response from GEMINI
     const generationConfig = {
       temperature: 1,
       top_p: 0.95,
@@ -63,21 +68,20 @@ export async function POST(req) {
       },
       response_mime_type: "application/json",
     };
+    
     const genAI = new GoogleGenerativeAI(apiKey);
     const model = genAI.getGenerativeModel({
       model: "gemini-2.0-flash",
       generationConfig,
     });
 
-    //Prompt is currently hard coded and will reference the prompts from the database after retrieval
+    // Prompt is currently hard coded and will reference the prompts from the database after retrieval
     const prompt = `Generate 5 multiple choice questions about identifying the result of an array function in ${language}. Include links in the resources. Separate the code from the question.`;
     const result = await model.generateContent(prompt);
 
-    return new Response(JSON.stringify(result), { status: 200 });
+    return NextResponse.json(result);
   } catch (error) {
     console.error("Gemini API Error:", error);
-    return new Response(JSON.stringify({ error: "Failed to generate quiz" }), {
-      status: 500,
-    });
+    return NextResponse.json({ error: "Failed to generate quiz" }, { status: 500 });
   }
 }
