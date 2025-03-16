@@ -2,7 +2,6 @@ import { sql } from "drizzle-orm";
 import { integer, pgTable, varchar, text, boolean, date, pgEnum, uuid, vector } from "drizzle-orm/pg-core";
 
 
-
 export const documents = pgTable('documents', {
     id: uuid('id').primaryKey().defaultRandom(),
     content: text('content').notNull(),
@@ -10,14 +9,6 @@ export const documents = pgTable('documents', {
   });
 
 
-/*
-Database to store topics for the roadmap quizzes and enable prerequisites for each topic
-
-ID: integer
-topic_name: varchar
-section_id: unique string (ex. "1.1", "1.2", "2.1", "2.2", etc.)
-prerequisite_id: string, foreign key referencing section_id
-*/
 export const topicsTable = pgTable("topics", {
     id: integer().primaryKey().generatedAlwaysAsIdentity(),
     topic_name: text().notNull(),
@@ -27,37 +18,15 @@ export const topicsTable = pgTable("topics", {
 })
 
 
-/*
-Database to store User Progress on the roadmap quizzes
-
-userID: text, foreign key referencing Users.id (from Clerk)
-topic_section: string, foreign key referencing Topics.section_id
-completed: boolean
-
-TODO: 
-1. In supabase table editor, add default value to requesting_user_id() function to get the user's ID.
-2. In supabase table editor, add Auth policies to allow user to insert and select data.
-*/
 export const userProgressTable = pgTable("user_progress", {
     id: integer().primaryKey().generatedAlwaysAsIdentity(),
     userID: text().notNull().default(sql`requesting_user_id()`),
     topic_section: varchar({ length: 255 }).notNull(),
+    points: integer().notNull().default(0),
     completed: boolean().notNull().default(false),
 })
 
 
-/* 
-Database to store user history on previous completed roadmap quizzes' statistics,
-including userID, specific quiz topic name, date taken, the number of correct answers, 
-the number of incorrect answers, accuracy percentage (# of correct answers / total questions * 100).
-
-userID: text, foreign key referencing Users.id (from Clerk)
-quiz_topic: varchar
-date_taken: date
-correct_answers: integer
-incorrect_answers: integer
-accuracy_percentage: integer
-*/
 export const quizStatus = pgEnum('quiz_status', ['NOT_STARTED', 'IN_PROGRESS', 'COMPLETED'])
 
 export const userRoadmapHistoryTable = pgTable("user_roadmap_history", {

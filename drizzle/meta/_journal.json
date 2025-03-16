@@ -15,6 +15,13 @@
       "when": 1740604074761,
       "tag": "0001_flippant_thaddeus_ross",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1742147100083,
+      "tag": "0002_lively_alex_wilder",
+      "breakpoints": true
     }
   ]
 }
