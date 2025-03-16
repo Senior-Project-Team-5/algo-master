@@ -27,10 +27,10 @@
     5) Keep track of end of quiz
 */
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useParams } from "next/navigation";
 import Prequiz from "./components/Prequiz/Prequiz";
-import Quiz from "./components/Quiz/Quiz";
+import Quiz from "./components/quiz/Quiz";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import Postquiz from "./components/Postquiz/Postquiz";
@@ -53,29 +53,37 @@ const topic: React.FC = () => {
   const [quiz, setQuiz] = useState<QuizItem[]>([]);
   const [quizStatus, setQuizStatus] = useState<number>(0); // 0: not started, 1: start quiz, 2: ended quiz
   const [language, setLanguage] = useState<string>("python");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const fetchingRef = useRef<boolean>(false);
 
   // Function to get the quiz from GEMINI
   const fetchQuiz = async () => {
+    // Prevent duplicate API calls
+    if (fetchingRef.current) return;
+    
+    fetchingRef.current = true;
+    setIsLoading(true);
+    
     try {
-      const response = await fetch("/api/generateQuiz", {
+      const response = await fetch("/api/query", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ language }),
+        body: JSON.stringify({ query: decodeURI(topic), language }),
       });
       const data = await response.json();
-      const questions = JSON.parse(
-        data.response.candidates[0].content.parts[0].text
-      );
-      console.log(questions);
+      const questions = JSON.parse(data.answer);
       setQuiz(questions);
     } catch (error) {
       console.error("Error fetching quiz:", error);
+    } finally {
+      setIsLoading(false);
+      fetchingRef.current = false;
     }
   };
 
-  // Runs immediately when the page is being rendered
+  // Runs when language changes
   useEffect(() => {
     fetchQuiz();
   }, [language]);
@@ -86,29 +94,33 @@ const topic: React.FC = () => {
         <div>
           <Prequiz topic={topic} />
           <Button
-            disabled={quiz.length == 0}
+            disabled={isLoading}
             onClick={() => {
-              setQuiz([]);
-              setLanguage("C++");
+              if (!isLoading) {
+                setQuiz([]);
+                setLanguage("C++");
+              }
             }}
           >
             C++
           </Button>
           <Button
-            disabled={quiz.length == 0}
+            disabled={isLoading}
             onClick={() => {
-              setQuiz([]);
-              setLanguage("Python");
+              if (!isLoading) {
+                setQuiz([]);
+                setLanguage("Python");
+              }
             }}
           >
             Python
           </Button>
           <Button
             variant="primary"
-            disabled={quiz.length == 0}
+            disabled={quiz.length == 0 || isLoading}
             onClick={() => setQuizStatus(1)}
           >
-            Start{" "}
+            {isLoading ? "Loading..." : "Start"}
           </Button>
         </div>
       )}
