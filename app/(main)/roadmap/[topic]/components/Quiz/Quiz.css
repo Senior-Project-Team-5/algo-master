@@ -5,6 +5,30 @@
   justify-content: center;
 }
 
+.quiz-header {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding: 0 20px;
+}
+
+.exit-button {
+  border: 1px solid #cc3333;
+  color: #cc3333;
+  transition: all 0.3s ease;
+}
+
+.exit-button:hover {
+  background-color: #cc3333;
+  color: white;
+}
+
+.exit-button-link {
+  text-decoration: none;
+}
+
 .question-question {
   font-size: 30px;
 }
@@ -31,4 +55,23 @@
 
 .question-post-text {
   margin-right: 50px;
+}
+
+.loading {
+  margin: 40px 0;
+  text-align: center;
+  font-size: 18px;
+}
+
+.score-indicator {
+  margin-bottom: 0;
+  font-size: 20px;
+  color: #3366cc;
+  align-self: flex-end;
+}
+
+.question-number {
+  margin-bottom: 20px;
+  color: #555;
+  font-weight: normal;
 }

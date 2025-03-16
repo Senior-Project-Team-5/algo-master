@@ -13,49 +13,46 @@ const generationConfig = {
   top_k: 40,
   max_output_tokens: 8192,
   response_schema: {
-    type: "array",
-    items: {
-      type: "object",
-      properties: {
-        question: {
-          type: "string",
-        },
-        code: {
-          type: "string",
-        },
-        choices: {
-          type: "array",
-          items: {
-            type: "object",
-            properties: {
-              choice: {
-                type: "string",
-              },
-              explanation: {
-                type: "string",
-              },
+    type: "object",
+    properties: {
+      question: {
+        type: "string",
+      },
+      code: {
+        type: "string",
+      },
+      choices: {
+        type: "array",
+        items: {
+          type: "object",
+          properties: {
+            choice: {
+              type: "string",
             },
-            required: ["choice", "explanation"],
+            explanation: {
+              type: "string",
+            },
           },
-        },
-        answer: {
-          type: "string",
-        },
-        explanation: {
-          type: "string",
-        },
-        resources: {
-          type: "string",
+          required: ["choice", "explanation"],
         },
       },
-      required: [
-        "question",
-        "choices",
-        "answer",
-        "explanation",
-        "resources",
-      ],
+      answer: {
+        type: "string",
+      },
+      explanation: {
+        type: "string",
+      },
+      resources: {
+        type: "string",
+      },
     },
+    required: [
+      "question",
+      "choices",
+      "answer",
+      "explanation",
+      "resources",
+    ],
   },
   response_mime_type: "application/json",
 };
@@ -78,7 +75,18 @@ export async function POST(req: NextRequest) {
     // 3. Generate response
     const context = results.map(r => r.content).join('\n\n');
     const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash', generationConfig });
-    const prompt = `Generate 10 data structures and algorithms multiple choice (4 choices) questions in the following style/format:\nProgramming Language (if question requires to show code): ${language}\nQuestions on the topic: ${query}\nAnswer: \nExplanation: \nResources (Link to a resource page):\n\nand based on the following context:\nContext:\n\n${context}\n`;
+    const prompt = `Generate 1 data structures and algorithms multiple choice (4 choices) question in the following style/format:
+Programming Language (if question requires to show code): ${language}
+Question on the topic: ${query}
+Answer: 
+Explanation: 
+Resources (Link to a resource page):
+
+and based on the following context:
+Context:
+
+${context}
+`;
     
     const result = await model.generateContent(prompt);
     const answer = result.response.text();

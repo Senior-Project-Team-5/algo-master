@@ -2,12 +2,13 @@ import Link from "next/link";
 
 const Postquiz = () => {
   return (
-    <div>
+    <div className="postquiz-container">
       <h1>
-        You've completed the quiz
+        Congratulations! You've completed the quiz
       </h1>
+      <p>You've reached the goal of 10 points.</p>
       
-      <Link href={`/roadmap`}>
+      <Link href={`/roadmap`} className="return-link">
         Return to Roadmap
       </Link>
     </div>
