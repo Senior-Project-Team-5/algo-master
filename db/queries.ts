@@ -2,10 +2,16 @@ import { cache } from "react";
 import db from "./index";
 import { auth } from "@clerk/nextjs/server";
 import { eq, and } from "drizzle-orm";
-import { userProgressTable } from "./schema";
+import { userProgressTable, topicsTable } from "./schema";
+
+// Shared function to get userId with caching
+export const getCachedUserId = cache(async () => {
+    const { userId } = await auth();
+    return userId;
+});
 
 export const getUserProgress = cache(async () => {
-    const { userId } = await auth();
+    const userId = await getCachedUserId();
     // console.log("User ID:", userId)
 
     if (!userId) {
@@ -22,11 +28,8 @@ export const getUserProgress = cache(async () => {
 
 
 export const getOneUserProgress = cache(async (topic_section: string) => {
-    const { userId } = await auth();
-
-    if (!userId) {
-        return null;
-    }
+    const userId = await getCachedUserId();
+    if (!userId) return null;
 
     const data = await db.query.userProgressTable.findFirst({
         where: and(
@@ -39,17 +42,51 @@ export const getOneUserProgress = cache(async (topic_section: string) => {
 })
 
 
-export const getTopics = cache(async () => {
-    const { userId } = await auth();
+export const getTopicName = cache(async (section_name: string) => {
+    const userId = await getCachedUserId();
+    if (!userId) return null;
 
-    if (!userId) {
-        return null;
-    }
-
-    const data = await db.query.topicsTable.findMany()
+    const data = await db.query.topicsTable.findFirst({
+        where: eq(topicsTable.section_name, section_name)
+    })
 
     return data
 })
+
+export const getTopicSections = cache(async (category: "ARRAYS_AND_STRINGS" | "HASHMAPS_AND_SETS" | "STACKS_AND_QUEUES" | "LINKED_LISTS" | "BINARY_SEARCH" | "SLIDING_WINDOW" | "TREES" | "HEAPS" | "BACKTRACKING" | "GRAPHS" | "DYNAMIC_PROGRAMMING") => {
+    const userId = await getCachedUserId();
+    if (!userId) return null;
+
+    return db.query.topicsTable.findMany({
+        where: eq(topicsTable.topic_category, category)
+    });
+});
+
+// Helper function to map frontend names to enum values
+const getCategoryEnum = (topic_name: string) => {
+    switch(topic_name) {
+        case "Arrays & Strings": return "ARRAYS_AND_STRINGS";
+        case "Hashmaps & Sets": return "HASHMAPS_AND_SETS";
+        case "Stacks & Queues": return "STACKS_AND_QUEUES";
+        case "Linked Lists": return "LINKED_LISTS";
+        case "Binary Search": return "BINARY_SEARCH";
+        case "Sliding Window": return "SLIDING_WINDOW";
+        case "Trees": return "TREES";
+        case "Heaps": return "HEAPS";
+        case "Backtracking": return "BACKTRACKING";
+        case "Graphs": return "GRAPHS";
+        case "Dynamic Programming": return "DYNAMIC_PROGRAMMING";
+        default: return null;
+    }
+};
+
+// Replace all individual topic queries with a single function
+export const getTopicData = cache(async (topic_name: string) => {
+    const category = getCategoryEnum(topic_name);
+    if (!category) return null;
+    return getTopicSections(category);
+});
+
 
 // export const getTopTenUsers = cache(async () => {
 //     const { userId } = await auth();

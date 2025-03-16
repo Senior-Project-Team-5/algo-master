@@ -1,4 +1,4 @@
-import { getUserProgress, getTopics } from "@/db/queries";
+import { getUserProgress, getTopicData } from "@/db/queries";
 import { UnitBanner } from "./unit-banner";
 import { UnitButton } from "./unit-button";
 import { index } from "drizzle-orm/pg-core";
@@ -14,7 +14,7 @@ type Props = {
 export const Unit = async ({ id, topic_name }: Props) => {
     const [userProgress, topicData] = await Promise.all([
         getUserProgress(),
-        getTopics()
+        getTopicData(topic_name)
     ]);
 
     if (!userProgress || !topicData) return null;
@@ -43,11 +43,10 @@ export const Unit = async ({ id, topic_name }: Props) => {
                             key={topic.id} 
                             id={topic.id}
                             totalCount={topicData.length}
-                            topic_name={topic.topic_name}
+                            topic_name={topic.section_name}
                             section_id={topic.section_id} 
                             locked={isLocked}
-                            // pointsEarned={currentProgress?.points ?? 0}
-                            pointsEarned={0}
+                            pointsEarned={currentProgress?.points ?? 0}
                         />
                     );
                 })}

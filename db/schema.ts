@@ -1,6 +1,19 @@
 import { sql } from "drizzle-orm";
 import { integer, pgTable, varchar, text, boolean, date, pgEnum, uuid, vector } from "drizzle-orm/pg-core";
 
+export const topicCategoryEnum = pgEnum('topic_category', [
+    'ARRAYS_AND_STRINGS',
+    'HASHMAPS_AND_SETS',
+    'STACKS_AND_QUEUES',
+    'LINKED_LISTS',
+    'BINARY_SEARCH',
+    'SLIDING_WINDOW',
+    'TREES',
+    'HEAPS',
+    'BACKTRACKING',
+    'GRAPHS',
+    'DYNAMIC_PROGRAMMING'
+]);
 
 export const documents = pgTable('documents', {
     id: uuid('id').primaryKey().defaultRandom(),
@@ -11,11 +24,12 @@ export const documents = pgTable('documents', {
 
 export const topicsTable = pgTable("topics", {
     id: integer().primaryKey().generatedAlwaysAsIdentity(),
-    topic_name: text().notNull(),
+    topic_category: topicCategoryEnum().notNull(),
+    section_name: text().notNull(),
     section_id: varchar({ length: 255 }).notNull().unique(),
     prerequisite_id: varchar({ length: 255 }),
     points_required: integer().notNull().default(10),
-})
+});
 
 
 export const userProgressTable = pgTable("user_progress", {

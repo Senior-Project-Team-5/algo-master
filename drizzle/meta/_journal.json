@@ -22,6 +22,20 @@
       "when": 1742147100083,
       "tag": "0002_lively_alex_wilder",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1742151682310,
+      "tag": "0003_far_earthquake",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1742151722415,
+      "tag": "0004_narrow_wilson_fisk",
+      "breakpoints": true
     }
   ]
 }
