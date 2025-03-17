@@ -1,7 +1,10 @@
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useCallback, useEffect } from "react";
 import "./Quiz.css";
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
+import { useRouter } from "next/navigation";
 
 interface MultipleChoice {
   choice: string;
@@ -12,6 +15,7 @@ interface QuizItem {
   question: string;
   choices: MultipleChoice[];
   answer: string;
+  explanation: string;
   resources: string;
   code: string;
 }
@@ -21,15 +25,19 @@ interface QuestionsProps {
   setQuizStatus: React.Dispatch<React.SetStateAction<number>>;
   topic: string;
   language: string;
+  topicID: string;
+  initialPoints: number;
 }
 
-const Quiz: React.FC<QuestionsProps> = ({ initialQuestion, setQuizStatus, topic, language }) => {
+const Quiz: React.FC<QuestionsProps> = ({ initialQuestion, setQuizStatus, topic, language, topicID, initialPoints }) => {
+  const router = useRouter();
   // Question variables
   const [questionNumber, setQuestionNumber] = useState(1);
   const [question, setQuestion] = useState(initialQuestion.question);
   const [code, setCode] = useState(initialQuestion.code);
   const [choices, setChoices] = useState(initialQuestion.choices);
   const [correctAnswer, setCorrectAnswer] = useState(initialQuestion.answer);
+  
   const [resources, setResources] = useState(initialQuestion.resources);
 
   // Tracking variables
@@ -37,7 +45,14 @@ const Quiz: React.FC<QuestionsProps> = ({ initialQuestion, setQuizStatus, topic,
   const [isAnswered, setIsAnswered] = useState(false);
   const [explanation, setExplanation] = useState<string | null>();
   const [isLoading, setIsLoading] = useState(false);
-  const [score, setScore] = useState(0);
+  
+  // Initialize score with initialPoints instead of 0
+  const [score, setScore] = useState(initialPoints);
+  
+  // Log initial points for debugging
+  useEffect(() => {
+    console.log("Quiz initialized with points:", initialPoints);
+  }, [initialPoints]);
 
   const checkAnswer = (
     event: React.MouseEvent<HTMLButtonElement>,
@@ -46,6 +61,7 @@ const Quiz: React.FC<QuestionsProps> = ({ initialQuestion, setQuizStatus, topic,
   ) => {
     setIsAnswered(true);
     const correct = choice === correctAnswer;
+    console.log("Correct answer:", correctAnswer, "User choice:", choice, "Is correct:", correct);
     setIsCorrect(correct);
     setExplanation(explanation);
     
@@ -66,7 +82,7 @@ const Quiz: React.FC<QuestionsProps> = ({ initialQuestion, setQuizStatus, topic,
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ query: decodeURI(topic), language }),
+        body: JSON.stringify({ query: decodeURIComponent(topic), language }),
       });
       
       const data = await response.json();
@@ -102,23 +118,60 @@ const Quiz: React.FC<QuestionsProps> = ({ initialQuestion, setQuizStatus, topic,
     fetchNextQuestion();
   };
 
+  const saveProgressAndExit = async () => {
+    try {
+      // Save progress via API
+      const response = await fetch("/api/quiz/progress", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ 
+          score,
+          topicID
+        }),
+      });
+      
+      const data = await response.json();
+      console.log(data);
+
+      // Redirect to roadmap
+      router.push("/roadmap");
+    } catch (error) {
+      console.error("Error saving progress:", error);
+      router.push("/roadmap");
+    }
+  };
+
   return (
     <div className="question">
       <div className="quiz-header">
         <h2 className="score-indicator">Score: {score}/10</h2>
-        <Link href="/roadmap" className="exit-button-link">
-          <Button variant="danger" className="exit-button">
-            Exit Quiz
-          </Button>
-        </Link>
+        <Button 
+          variant="danger" 
+          className="exit-button"
+          onClick={saveProgressAndExit}
+        >
+          Exit Quiz
+        </Button>
       </div>
       <h3 className="question-number">Question {questionNumber}</h3>
       <h1 className="question-question">{question}</h1>
-      <div className="question-code">
-        <pre>
-          <code>{code}</code>
-        </pre>
-      </div>
+      
+      {code && (
+        <div className="my-4">
+          <SyntaxHighlighter
+            language={language.toLowerCase()}
+            style={vscDarkPlus}
+            customStyle={{
+            borderRadius: "0.5rem",
+            fontSize: "0.9rem",
+          }}
+          >
+            {code}
+          </SyntaxHighlighter>
+        </div>
+      )}
 
       {isLoading ? (
         <div className="loading">

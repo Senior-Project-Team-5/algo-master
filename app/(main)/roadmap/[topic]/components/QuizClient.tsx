@@ -15,15 +15,18 @@ interface QuizItem {
   question: string;
   choices: MultipleChoice[];
   answer: string;
+  explanation: string;
   resources: string;
   code: string;
 }
 
 interface QuizClientProps {
   topicParam: string;
+  topicID: string;
+  initialPoints: number;
 }
 
-const QuizClient: React.FC<QuizClientProps> = ({ topicParam }) => {
+const QuizClient: React.FC<QuizClientProps> = ({ topicParam, topicID, initialPoints }) => {
   const [currentQuestion, setCurrentQuestion] = useState<QuizItem | null>(null);
   const [quizStatus, setQuizStatus] = useState<number>(0); // 0: not started, 1: start quiz, 2: ended quiz
   const [language, setLanguage] = useState<string>("python");
@@ -44,7 +47,7 @@ const QuizClient: React.FC<QuizClientProps> = ({ topicParam }) => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ query: decodeURI(topicParam), language }),
+        body: JSON.stringify({ query: decodeURIComponent(topicParam), language }),
       });
       const data = await response.json();
       const questionData = JSON.parse(data.answer);
@@ -111,6 +114,8 @@ const QuizClient: React.FC<QuizClientProps> = ({ topicParam }) => {
           setQuizStatus={setQuizStatus} 
           topic={topicParam}
           language={language}
+          topicID={topicID}
+          initialPoints={initialPoints}
         />
       )}
 
