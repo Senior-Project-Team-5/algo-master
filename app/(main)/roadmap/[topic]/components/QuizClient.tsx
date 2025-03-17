@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import Prequiz from "./Prequiz/Prequiz";
-import Quiz from "./quiz/Quiz";
+import Quiz from "./Quiz/Quiz";
 import { Button } from "@/components/ui/button";
 import Postquiz from "./Postquiz/Postquiz";
 
