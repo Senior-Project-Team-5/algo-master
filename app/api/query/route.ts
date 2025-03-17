@@ -9,7 +9,7 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
 
 const generationConfig = {
   temperature: 1,
-  top_p: 0.90,
+  top_p: 0.95,
   top_k: 40,
   max_output_tokens: 8192,
   response_schema: {
@@ -70,15 +70,20 @@ export async function POST(req: NextRequest) {
       .select()
       .from(documents)
       .orderBy(sql`${documents.embedding} <=> ${JSON.stringify(queryEmbedding)}`)
-      .limit(10);
+      .limit(5);
 
     // 3. Generate response
     const context = results.map(r => r.content).join('\n\n');
     const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash', generationConfig });
-    const prompt = `Generate 1 data structures and algorithms multiple choice (4 choices) question in the following style/format:
-Programming Language (if question requires to show code): ${language}
+    const prompt = `Generate 1 data structures and algorithms multiple choice (4 choices) question and strictly follow the following style/format:
+Programming Language for the code: ${language}
 Question on the topic: ${query}
-Answer: 
+
+Supporting Code for the question (only generate code if the question relies on it, for example: if the question is about a specific function or algorithm's output):
+
+Choices:
+
+Answer (Exactly the same string as one of the choices): 
 Explanation: 
 Resources (Link to a resource page):
 
@@ -90,7 +95,7 @@ ${context}
     
     const result = await model.generateContent(prompt);
     const answer = result.response.text();
-    console.log(result.response);
+    console.log(result.response.text());
 
     return NextResponse.json({ answer });
 
