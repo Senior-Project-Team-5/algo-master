@@ -59,7 +59,7 @@ const generationConfig = {
 
 export async function POST(req: NextRequest) {
   const res = await req.json();
-  const { query, language } = res; // Extract query and language from request body
+  const { query, language='python' } = res; // Extract query and language from request body
   
   try {
     // 1. Get query embedding
@@ -97,7 +97,7 @@ ${context}
     const answer = result.response.text();
     console.log(result.response.text());
 
-    return NextResponse.json({ answer });
+    return NextResponse.json({ answer, prompt });
 
   } catch (error) {
     return NextResponse.json(
