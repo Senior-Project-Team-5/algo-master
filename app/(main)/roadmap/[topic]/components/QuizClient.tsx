@@ -119,7 +119,7 @@ const QuizClient: React.FC<QuizClientProps> = ({ topicParam, topicID, initialPoi
         />
       )}
 
-      {quizStatus == 2 && <Postquiz />}
+      {quizStatus == 2 && <Postquiz topicID={topicID} />}
     </>
   );
 };
