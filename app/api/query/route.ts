@@ -97,7 +97,7 @@ ${context}
     const answer = result.response.text();
     console.log(result.response.text());
 
-    return NextResponse.json({ answer });
+    return NextResponse.json({ answer, prompt });
 
   } catch (error) {
     return NextResponse.json(
