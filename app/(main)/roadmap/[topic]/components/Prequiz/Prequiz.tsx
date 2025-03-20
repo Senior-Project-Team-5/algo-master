@@ -5,7 +5,7 @@ interface Topic {
 const Prequiz: React.FC<Topic> = ({ topic }) => {
   return (
     <div>
-      <h3>{decodeURI(topic)}</h3>
+      <h3>{decodeURIComponent(topic)}</h3>
       <h1>
         <br />
         Questions includes
