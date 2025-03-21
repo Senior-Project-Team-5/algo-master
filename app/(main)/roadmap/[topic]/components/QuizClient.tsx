@@ -5,6 +5,7 @@ import Prequiz from "./Prequiz/Prequiz";
 import Quiz from "./Quiz/Quiz";
 import { Button } from "@/components/ui/button";
 import Postquiz from "./Postquiz/Postquiz";
+import { topicCategoryEnum } from "@/db/schema";
 
 interface MultipleChoice {
   choice: string;
@@ -23,17 +24,77 @@ interface QuizItem {
 interface QuizClientProps {
   topicParam: string;
   topicID: string;
+  topicCategory: string;
   initialPoints: number;
 }
 
-const QuizClient: React.FC<QuizClientProps> = ({ topicParam, topicID, initialPoints }) => {
+// const getCategoryEnum = (topic: string): string => {
+//   // Map of topic names to category enum values
+//   const topicToCategoryMap: Record<string, string> = {
+//     // Arrays and Strings
+//     "arrays": "ARRAYS_AND_STRINGS",
+//     "strings": "ARRAYS_AND_STRINGS",
+//     "two pointers": "ARRAYS_AND_STRINGS",
+//     "sliding window": "ARRAYS_AND_STRINGS",
+    
+//     // Linked Lists
+//     "linked lists": "LINKED_LISTS",
+//     "linked list": "LINKED_LISTS",
+    
+//     // Trees and Graphs
+//     "trees": "TREES_AND_GRAPHS",
+//     "binary trees": "TREES_AND_GRAPHS",
+//     "binary search trees": "TREES_AND_GRAPHS",
+//     "graphs": "TREES_AND_GRAPHS",
+//     "trie": "TREES_AND_GRAPHS",
+    
+//     // Recursion and Dynamic Programming
+//     "recursion": "RECURSION_AND_DP",
+//     "dynamic programming": "RECURSION_AND_DP",
+//     "memoization": "RECURSION_AND_DP",
+    
+//     // Sorting and Searching
+//     "sorting": "SORTING_AND_SEARCHING",
+//     "searching": "SORTING_AND_SEARCHING",
+//     "binary search": "SORTING_AND_SEARCHING",
+    
+//     // Data Structures
+//     "stacks": "DATA_STRUCTURES",
+//     "queues": "DATA_STRUCTURES",
+//     "heaps": "DATA_STRUCTURES",
+//     "hash tables": "DATA_STRUCTURES",
+    
+//     // Other Algorithms
+//     "greedy algorithms": "OTHER_ALGORITHMS",
+//     "backtracking": "OTHER_ALGORITHMS",
+//   };
+  
+//   // Normalize the topic (lowercase, remove extra spaces)
+//   const normalizedTopic = topic.toLowerCase().trim();
+  
+//   // Find the matching category or return default
+//   for (const [key, value] of Object.entries(topicToCategoryMap)) {
+//     if (normalizedTopic.includes(key)) {
+//       return value;
+//     }
+//   }
+  
+//   // If no match is found, return ALL_CATEGORIES or any default category
+//   return "ALL_CATEGORIES";
+// };
+
+const QuizClient: React.FC<QuizClientProps> = ({ topicParam, topicID, topicCategory, initialPoints }) => {
   const [currentQuestion, setCurrentQuestion] = useState<QuizItem | null>(null);
   const [quizStatus, setQuizStatus] = useState<number>(0); // 0: not started, 1: start quiz, 2: ended quiz
   const [language, setLanguage] = useState<string>("python");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const fetchingRef = useRef<boolean>(false);
+  
+  useEffect(() => {
+    console.log("Raw topicParam:", topicParam);
+    console.log("Decoded topicParam:", decodeURIComponent(topicParam));
+  }, [topicParam]);
 
-  // Function to get a single quiz question from GEMINI
   const fetchQuestion = async () => {
     // Prevent duplicate API calls
     if (fetchingRef.current) return;
@@ -42,13 +103,19 @@ const QuizClient: React.FC<QuizClientProps> = ({ topicParam, topicID, initialPoi
     setIsLoading(true);
     
     try {
+      
       const response = await fetch("/api/query", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ query: decodeURIComponent(topicParam), language }),
+        body: JSON.stringify({ 
+          query: decodeURIComponent(topicParam), 
+          language,
+          category: topicCategory
+        }),
       });
+      
       const data = await response.json();
       const questionData = JSON.parse(data.answer);
       setCurrentQuestion(questionData);
