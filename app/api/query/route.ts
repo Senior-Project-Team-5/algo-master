@@ -93,24 +93,38 @@ export async function POST(req: NextRequest) {
     });
     
     const prompt = `
-    Generate a data structures and algorithms multiple choice question about "${query}" in ${language} programming language.
-    
-    Use the following relevant information from our knowledge base to create a high-quality question, only if it is relevant to ${query}:
-    
+    Generate a multiple choice question about "${query}" in ${language} programming language.
+
+    ${context.length > 100 ? `CONTEXT INFORMATION:
+    The following information from our knowledge base may be helpful:
+
     ${context}
-    
-    IMPORTANT FORMATTING INSTRUCTIONS:
-    - The "question" field should contain ONLY the text of the question, without any code snippets embedded in it
-    - If your question refers to code, use phrases like "in the code above" or "in the provided code"
-    - Put ALL code examples in the "code" field ONLY, not in the question text
-    
-    CONTENT INSTRUCTIONS:
-    - Focus specifically on ${questionFocus} for this question
-    - The question should test understanding of core concepts related to "${query}"
-    - Provide 4 possible answers with one correct answer
-    - Make each answer choice clear and distinct
-    - Provide detailed explanations for why each answer is correct or incorrect
-    - Include useful resources or references for further learning
+
+    Use this context ONLY if it contains information directly relevant to "${query}". If the context is not relevant to the specific query, generate a question based on your own knowledge.` : `No specific context is available for this query. Create a question based on your knowledge of ${query}.`}
+    IMPORTANT FORMATTING REQUIREMENTS:
+    - The "question" field must contain ONLY the text of the question without code snippets
+    - If your question refers to code, place ALL code in the "code" field and refer to it as "the code below" in your question
+    - Never embed code blocks (using \`\`\`) within the question text itself
+
+    CONTENT REQUIREMENTS:
+    - Focus on ${questionFocus} aspects of "${query}"
+    - If the ${context} is in a different language, ensure the question is converted to ${language}
+    - Create a multiple choice question with EXACTLY 4 answer choices labeled A, B, C, and D
+    - CRITICAL: Ensure EXACTLY ONE answer choice is correct
+    - Make the question challenging but fair for an intermediate programmer
+    - Make answer choices distinct and non-overlapping
+    - For each answer choice, provide a detailed explanation of why it is correct or incorrect
+    - Include 1-2 useful resources or references for further learning
+
+    ANSWER FORMAT REQUIREMENTS:
+    - In the "answer" field, make to include the entire correct answer choice, including the letter and text
+    - Double-check that your correct answer actually appears in the choices
+    - Verify that your explanations for correct/incorrect answers are consistent with your chosen answer
+
+    QUALITY CONTROL:
+    - Read through your complete question and answer one more time
+    - Verify there is exactly one correct answer that clearly matches your explanation
+    - Ensure the question tests understanding of ${query} rather than general programming knowledge
     `;
     
     const result = await model.generateContent(prompt);
