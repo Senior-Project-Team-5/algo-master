@@ -137,7 +137,7 @@ export async function POST(req: NextRequest) {
       console.log('QUESTION FOCUS:', questionFocus);
       console.log('QUESTION:', parsedResponse.question);
       console.log('CODE:', parsedResponse.code);
-      console.log('CHOICES:', parsedResponse.choices.map(c => c.choice.substring(0, 30) + '...').join(' | '));
+      console.log('CHOICES:', parsedResponse.choices.map((c: { choice: string; explanation: string }) => c.choice.substring(0, 30) + '...').join(' | '));
       console.log('ANSWER:', parsedResponse.answer);
       
       // Validate that the question doesn't contain code blocks
