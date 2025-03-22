@@ -1,5 +1,5 @@
 import { sql } from "drizzle-orm";
-import { integer, pgTable, varchar, text, boolean, date, pgEnum, uuid, vector } from "drizzle-orm/pg-core";
+import { integer, pgTable, varchar, text, boolean, date, pgEnum, uuid, vector, jsonb } from "drizzle-orm/pg-core";
 
 export const topicCategoryEnum = pgEnum('topic_category', [
     'ARRAYS_AND_STRINGS',
@@ -18,6 +18,7 @@ export const topicCategoryEnum = pgEnum('topic_category', [
 export const documents = pgTable('documents', {
     id: uuid('id').primaryKey().defaultRandom(),
     content: text('content').notNull(),
+    metadata: jsonb('metadata'),
     embedding: vector('embedding', { dimensions: 768 }) // Match embedding model dimensions
   });
 

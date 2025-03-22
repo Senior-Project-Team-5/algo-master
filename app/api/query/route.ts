@@ -1,108 +1,164 @@
 import { NextRequest, NextResponse } from 'next/server';
-import db from '@/db';
-import { documents } from "@/db/schema";
-import { generateEmbeddings } from '@/lib/embeddings';
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import { sql } from 'drizzle-orm';
+import { SupabaseVectorStore } from "@langchain/community/vectorstores/supabase";
+import { GoogleGenerativeAIEmbeddings } from "@langchain/google-genai";
+import { createClient } from "@supabase/supabase-js";
 
+// Initialize Supabase client
+const supabaseClient = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+);
+
+// Initialize Google Generative AI
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
 
+// Question focus types to cycle through
+const questionFocusTypes = [
+  "implementation details and code structure",
+  "time and space complexity analysis",
+  "edge cases and error handling",
+  "algorithm comparison and tradeoffs",
+  "theoretical foundations",
+  "practical applications"
+];
+
 const generationConfig = {
-  temperature: 1,
+  temperature: 0.9,
   top_p: 0.95,
   top_k: 40,
   max_output_tokens: 8192,
   response_schema: {
     type: "object",
     properties: {
-      question: {
-        type: "string",
-      },
-      code: {
-        type: "string",
-      },
+      question: { type: "string" },
+      code: { type: "string" },
       choices: {
         type: "array",
         items: {
           type: "object",
           properties: {
-            choice: {
-              type: "string",
-            },
-            explanation: {
-              type: "string",
-            },
+            choice: { type: "string" },
+            explanation: { type: "string" },
           },
           required: ["choice", "explanation"],
         },
       },
-      answer: {
-        type: "string",
-      },
-      explanation: {
-        type: "string",
-      },
-      resources: {
-        type: "string",
-      },
+      answer: { type: "string" },
+      explanation: { type: "string" },
+      resources: { type: "string" },
     },
-    required: [
-      "question",
-      "choices",
-      "answer",
-      "explanation",
-      "resources",
-    ],
+    required: ["question", "choices", "answer", "explanation", "resources"],
   },
   response_mime_type: "application/json",
 };
 
 export async function POST(req: NextRequest) {
-  const res = await req.json();
-  const { query, language='python' } = res; // Extract query and language from request body
-  
   try {
-    // 1. Get query embedding
-    const queryEmbedding = await generateEmbeddings(query);
+    const body = await req.json();
+    const { query, language = 'python', category } = body;
     
-    // 2. Vector search
-    const results = await db
-      .select()
-      .from(documents)
-      .orderBy(sql`${documents.embedding} <=> ${JSON.stringify(queryEmbedding)}`)
-      .limit(5);
+    // Select a random focus type
+    const focusIndex = Math.floor(Math.random() * questionFocusTypes.length);
+    const questionFocus = questionFocusTypes[focusIndex];
+    
+    // Create embeddings for the query
+    const embeddings = new GoogleGenerativeAIEmbeddings({
+      apiKey: process.env.GEMINI_API_KEY!,
+      modelName: "embedding-001",
+    });
+    
+    // Create a Supabase vector store
+    const vectorStore = new SupabaseVectorStore(embeddings, {
+      client: supabaseClient,
+      tableName: "documents",
+      queryName: "match_documents",
+      filter: category ? { category } : undefined,
+    });
+    
+    // Search for relevant documents
+    const queryEmbedding = await embeddings.embedQuery(query);
+    const results = await vectorStore.similaritySearch(query, 10);
+    
+    // Construct context from the selected documents
+    const context = results.map(doc => doc.pageContent).join("\n\n");
+    
+    // Generate the quiz question with RAG
+    const model = genAI.getGenerativeModel({
+      model: "gemini-2.0-flash",
+      generationConfig: {
+        ...generationConfig,
+        temperature: 0.85 + (Math.random() * 0.15)
+      },
+    });
+    
+    const prompt = `
+    Generate a multiple choice question about "${query}" in ${language} programming language.
 
-    // 3. Generate response
-    const context = results.map(r => r.content).join('\n\n');
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash', generationConfig });
-    const prompt = `Generate 1 data structures and algorithms multiple choice (4 choices) question and strictly follow the following style/format:
-Programming Language for the code: ${language}
-Question on the topic: ${query}
+    ${context.length > 100 ? `CONTEXT INFORMATION:
+    The following information from our knowledge base may be helpful:
 
-Supporting Code for the question (only generate code if the question relies on it, for example: if the question is about a specific function or algorithm's output):
+    ${context}
 
-Choices:
+    Use this context ONLY if it contains information directly relevant to "${query}". If the context is not relevant to the specific query, generate a question based on your own knowledge.` : `No specific context is available for this query. Create a question based on your knowledge of ${query}.`}
+    IMPORTANT FORMATTING REQUIREMENTS:
+    - The "question" field must contain ONLY the text of the question without code snippets
+    - If your question refers to code, place ALL code in the "code" field and refer to it as "the code below" in your question
+    - Never embed code blocks (using \`\`\`) within the question text itself
 
-Answer (Exactly the same string as one of the choices): 
-Explanation: 
-Resources (Link to a resource page):
+    CONTENT REQUIREMENTS:
+    - Focus on ${questionFocus} aspects of "${query}"
+    - If the ${context} is in a different language, ensure the question is converted to ${language}
+    - Create a multiple choice question with EXACTLY 4 answer choices labeled A, B, C, and D
+    - CRITICAL: Ensure EXACTLY ONE answer choice is correct
+    - Make the question challenging but fair for an intermediate programmer
+    - Make answer choices distinct and non-overlapping
+    - For each answer choice, provide a detailed explanation of why it is correct or incorrect
+    - Include 1-2 useful resources or references for further learning
 
-and based on the following context:
-Context:
+    ANSWER FORMAT REQUIREMENTS:
+    - In the "answer" field, make to include the entire correct answer choice, including the letter and text
+    - Double-check that your correct answer actually appears in the choices
+    - Verify that your explanations for correct/incorrect answers are consistent with your chosen answer
 
-${context}
-`;
+    QUALITY CONTROL:
+    - Read through your complete question and answer one more time
+    - Verify there is exactly one correct answer that clearly matches your explanation
+    - Ensure the question tests understanding of ${query} rather than general programming knowledge
+    `;
     
     const result = await model.generateContent(prompt);
-    const answer = result.response.text();
-    console.log(result.response.text());
-
-    return NextResponse.json({ answer, prompt });
-
+    const responseText = result.response.text();
+    
+    try {
+      const parsedResponse = JSON.parse(responseText);
+      
+      // Log for debugging
+      console.log('QUESTION FOCUS:', questionFocus);
+      console.log('QUESTION:', parsedResponse.question);
+      console.log('CODE:', parsedResponse.code);
+      console.log('CHOICES:', parsedResponse.choices.map((c: { choice: string; explanation: string }) => c.choice.substring(0, 30) + '...').join(' | '));
+      console.log('ANSWER:', parsedResponse.answer);
+      
+      // Validate that the question doesn't contain code blocks
+      if (parsedResponse.question.includes('```') && parsedResponse.code) {
+        console.warn('Question still contains code blocks despite instructions');
+      }
+      
+    } catch (parseError) {
+      console.error('Error parsing response from Gemini:', parseError);
+      console.log('Raw response:', responseText);
+    }
+    
+    return NextResponse.json({
+      answer: responseText,
+      sources: results.map(doc => ({
+        content: doc.pageContent.substring(0, 150) + "...",
+        metadata: doc.metadata
+      }))
+    });
   } catch (error) {
-    return NextResponse.json(
-      { error: 'Query processing failed' },
-      { status: 500 }
-    );
+    console.error("Error in query API:", error);
+    return NextResponse.json({ error: "Failed to generate question" }, { status: 500 });
   }
 }

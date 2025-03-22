@@ -34,7 +34,6 @@ export default async function TopicPage({ params }: { params: { topic: string } 
     const quizProgress = await getOneUserProgress(topicSection.section_id);
     const topicID = topicSection.section_id
     console.log(topicID)
-    console.log(topicID)
 
     // Default points to 0
     let initialPoints = 0;
@@ -57,7 +56,8 @@ export default async function TopicPage({ params }: { params: { topic: string } 
     // Pass both topicID and initialPoints to QuizClient
     return <QuizClient 
         topicParam={topic} 
-        topicID={topicID} 
+        topicID={topicID}
+        topicCategory={topicSection.topic_category} 
         initialPoints={initialPoints}
     />;
 }

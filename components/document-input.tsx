@@ -1,62 +1,86 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { topicCategoryEnum } from "@/db/schema";
 
-export default function DocumentInput() {
-  const [content, setContent] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState('');
+const DocumentInput = () => {
+  const [file, setFile] = useState<File | null>(null);
+  const [category, setCategory] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const [result, setResult] = useState<any>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!content.trim()) return;
+    if (!file || !category) return;
 
-    setLoading(true);
+    setIsUploading(true);
+    setResult(null);
+
     try {
-      const response = await fetch('/api/ingest', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ content }),
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("category", category);
+
+      const response = await fetch("/api/upload-document", {
+        method: "POST",
+        body: formData,
       });
 
-      if (!response.ok) throw new Error('Ingestion failed');
-      setMessage('Document ingested successfully!');
-      setContent('');
+      const data = await response.json();
+      setResult(data);
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : 'Failed to ingest document');
+      console.error("Error uploading document:", error);
+      setResult({ success: false, error: "Failed to upload document" });
     } finally {
-      setLoading(false);
+      setIsUploading(false);
     }
   };
 
   return (
-    <div className="max-w-2xl mx-auto p-4">
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <label className="block text-lg font-medium">
-          Enter Document Content:
-          <textarea
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            className="mt-1 block w-full h-64 p-2 border rounded-md"
-            placeholder="Paste your document content here..."
-            disabled={loading}
-          />
-        </label>
-        
-        <button
-          type="submit"
-          disabled={loading}
-          className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-gray-400"
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <div>
+        <Input
+          type="file"
+          accept=".pdf"
+          onChange={(e) => setFile(e.target.files?.[0] || null)}
+          className="mb-2"
+        />
+      </div>
+      
+      <div>
+        <Select 
+          value={category || undefined} 
+          onValueChange={setCategory}
         >
-          {loading ? 'Processing...' : 'Ingest Document'}
-        </button>
-        
-        {message && (
-          <div className={`p-3 rounded-md ${message.includes('success') ? 'bg-green-100' : 'bg-red-100'}`}>
-            {message}
-          </div>
-        )}
-      </form>
-    </div>
+          <SelectTrigger>
+            <SelectValue placeholder="Select topic category" />
+          </SelectTrigger>
+          <SelectContent>
+            {Object.values(topicCategoryEnum.enumValues).map((cat) => (
+              <SelectItem key={cat} value={cat}>
+                {cat.replace(/_/g, " ")}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+      
+      <Button type="submit" disabled={!file || !category || isUploading}>
+        {isUploading ? "Uploading..." : "Upload Document"}
+      </Button>
+      
+      {result && (
+        <div className={`p-4 mt-4 rounded-md ${result.success ? "bg-green-100" : "bg-red-100"}`}>
+          {result.success 
+            ? `Successfully processed ${result.count} chunks from the document.` 
+            : `Error: ${result.error}`}
+        </div>
+      )}
+    </form>
   );
-}
+};
+
+export default DocumentInput;
