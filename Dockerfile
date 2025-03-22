@@ -17,6 +17,7 @@ ENV NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_ZGl2aW5lLWFwaGlkLTE1LmNsZXJrLmFjY2
 ENV NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
 ENV NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up
 ENV NEXT_PUBLIC_APP_URL=https://algo-master-ar72sp7yfa-uc.a.run.app
+ENV NEXT_PUBLIC_SUPABASE_URL=https://vgveigetaybtvigqswxc.supabase.co
 
 RUN npm run build
 
