@@ -239,7 +239,7 @@ const Quiz: React.FC<QuestionsProps> = ({
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-bold text-gray-800">{decodeURIComponent(topic)} Quiz</h2>
         <Button 
-          variant="danger"
+          variant="default"
           className="text-sm px-4 py-1 text-gray-700 hover:bg-gray-100 border border-gray-300 rounded-full"
           onClick={saveProgressAndExit}
         >
