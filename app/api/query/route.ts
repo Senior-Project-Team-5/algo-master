@@ -114,7 +114,7 @@ export async function POST(req: NextRequest) {
     - Make the question challenging but fair for an intermediate programmer
     - Make answer choices distinct and non-overlapping
     - For each answer choice, provide a detailed explanation of why it is correct or incorrect
-    - Include 1-2 useful resources or references for further learning
+    - Include a useful & valid resource or reference to ${language} docs for further learning. Format-> { resoures: <url> }
 
     ANSWER FORMAT REQUIREMENTS:
     - In the "answer" field, make to include the entire correct answer choice, including the letter and text
@@ -134,11 +134,13 @@ export async function POST(req: NextRequest) {
       const parsedResponse = JSON.parse(responseText);
       
       // Log for debugging
-      console.log('QUESTION FOCUS:', questionFocus);
-      console.log('QUESTION:', parsedResponse.question);
-      console.log('CODE:', parsedResponse.code);
-      console.log('CHOICES:', parsedResponse.choices.map((c: { choice: string; explanation: string }) => c.choice.substring(0, 30) + '...').join(' | '));
-      console.log('ANSWER:', parsedResponse.answer);
+      console.log(parsedResponse);
+      // console.log('QUESTION FOCUS:', questionFocus);
+      // console.log('QUESTION:', parsedResponse.question);
+      // console.log('CODE:', parsedResponse.code);
+      // console.log('CHOICES:', parsedResponse.choices.map((c: { choice: string; explanation: string }) => c.choice.substring(0, 30) + '...').join(' | '));
+      // console.log('ANSWER:', parsedResponse.answer);
+      // console.log('Resources:', parsedResponse.resources);
       
       // Validate that the question doesn't contain code blocks
       if (parsedResponse.question.includes('```') && parsedResponse.code) {
