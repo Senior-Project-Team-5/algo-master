@@ -6,16 +6,16 @@ const Prequiz: React.FC<Topic> = ({ topic }) => {
   return (
     <div>
       <h3>{decodeURIComponent(topic)}</h3>
-      <h1>
+      {/* <h1>
         <br />
         Questions includes
-      </h1>
+      </h1> */}
       {/* Currently, the following prompts are hard coded, but later, it will be retrieved from the database */}
-      <ul>
+      {/* <ul>
         <li>Fundamentals of arrays</li>
         <li>Identifying an array function</li>
         <li>Identifying the result of an array function</li>
-      </ul>
+      </ul> */}
 
       <p>
         <br />
