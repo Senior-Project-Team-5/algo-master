@@ -89,3 +89,16 @@ points_earned: integer
 started_at: timestamp
 ended_at: timestamp
 */
+
+export const difficulties = pgEnum("difficulties", ["Easy", "Medium", "Hard", "Expert"])
+
+export const userInfiniteModeTable = pgTable("user_infinite_mode", {
+    id: integer().primaryKey().generatedAlwaysAsIdentity(),
+    userID: text().notNull().default(sql`requesting_user_id()`),
+    difficulty: difficulties().notNull(),
+    date_taken: date().notNull().default(sql`CURRENT_DATE`),
+    points: integer().notNull().default(0),
+    correct_answers: integer().notNull().default(0),
+    incorrect_answers: integer().notNull().default(0),
+    accuracy_percentage: integer().notNull().default(0),
+})
