@@ -42,7 +42,7 @@ export default function Dashboard() {
   
           {/* Achievements Section */}
           <h3 className="text-2xl text-[#2E588D] font-extrabold mb-4">Achievements</h3>
-          <div className="overflow-y-auto max-h-80">
+          <div className="overflow-y-auto max-h-96">
 
             <div className="bg-white p-4 rounded-lg shadow-md mb-4 flex items-center border-black">
               <div className="mr-4">
