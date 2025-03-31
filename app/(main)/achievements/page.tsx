@@ -42,47 +42,172 @@ export default function Dashboard() {
   
           {/* Achievements Section */}
           <h3 className="text-2xl text-[#2E588D] font-extrabold mb-4">Achievements</h3>
-  
-          <div className="bg-white p-4 rounded-lg shadow-md mb-4 flex items-center border-black">
-            <div className="mr-4">
-                <span >
-                    < img src="QuizMaster.png"/>
-                </span>
+          <div className="overflow-y-auto max-h-96">
+
+            <div className="bg-white p-4 rounded-lg shadow-md mb-4 flex items-center border-black">
+              <div className="mr-4">
+                  <span >
+                      < img className="w-40 h-40 rounded-md" src="QuizNovice.jpg" />
+                  </span>
+              </div>
+              <div className="flex-1">
+                  <div className="flex justify-between">
+                  <div>
+                      <span className="bg-[#2E588D] text-white text-xs px-2 py-1 rounded-md">Tier I</span>
+                      <h4 className="font-semibold mt-1">Quiz Novice</h4>
+                      <p className="text-gray-500 text-sm">Complete 3 Quizzes</p>
+                  </div>
+                  <p className="text-gray-500">2/3</p>
+                  </div>
+                  <div className="w-full bg-gray-200 h-2 rounded-full mt-2">
+                      <div className="bg-[#2E588D] h-2 rounded-full" style={{ width: "67%" }}></div>
+                  </div>
+              </div>
             </div>
-            <div className="flex-1">
-                <div className="flex justify-between">
-                <div>
-                    <span className="bg-green-500 text-white text-xs px-2 py-1 rounded-md">Tier I</span>
-                    <h4 className="font-semibold mt-1">Quiz Master</h4>
-                    <p className="text-gray-500 text-sm">Complete 3 Quizzes</p>
-                </div>
-                <p className="text-gray-500">2/3</p>
-                </div>
-                <div className="w-full bg-gray-200 h-2 rounded-full mt-2">
-                    <div className="bg-green-500 h-2 rounded-full" style={{ width: "67%" }}></div>
-                </div>
+
+            <div className="bg-white p-4 rounded-lg shadow-md mb-4 flex items-center border-black">
+              <div className="mr-4">
+                  <span >
+                      < img className="w-40 h-40 rounded-md" src="QuizMaster.jpg"/>
+                  </span>
+              </div>
+              <div className="flex-1">
+                  <div className="flex justify-between">
+                  <div>
+                      <span className="bg-[#2E588D] text-white text-xs px-2 py-1 rounded-md">Tier I</span>
+                      <h4 className="font-semibold mt-1">Quiz Master</h4>
+                      <p className="text-gray-500 text-sm">Complete 10 Quizzes</p>
+                  </div>
+                  <p className="text-gray-500">2/10</p>
+                  </div>
+                  <div className="w-full bg-gray-200 h-2 rounded-full mt-2">
+                      <div className="bg-[#2E588D] h-2 rounded-full" style={{ width: "20%" }}></div>
+                  </div>
+              </div>
             </div>
-          </div>
-  
-          <div className="bg-white p-4 rounded-lg shadow-md flex item-center border-black">
-            <div className="mr-4">
-                <span >
-                    < img src="Streak.png"/>
-                </span>
+            
+            <div className="bg-white p-4 rounded-lg shadow-md mb-4 flex items-center border-black">
+              <div className="mr-4">
+                  <span >
+                      < img className="w-40 h-40 rounded-md" src="QuizExpert.jpg"/>
+                  </span>
+              </div>
+              <div className="flex-1">
+                  <div className="flex justify-between">
+                  <div>
+                      <span className="bg-[#2E588D] text-white text-xs px-2 py-1 rounded-md">Tier I</span>
+                      <h4 className="font-semibold mt-1">Quiz Expert</h4>
+                      <p className="text-gray-500 text-sm">Complete 50 Quizzes</p>
+                  </div>
+                  <p className="text-gray-500">2/50</p>
+                  </div>
+                  <div className="w-full bg-gray-200 h-2 rounded-full mt-2">
+                      <div className="bg-[#2E588D] h-2 rounded-full" style={{ width: "4%" }}></div>
+                  </div>
+              </div>
             </div>
-            <div className="flex-1">
-                <div className="flex justify-between">
-                <div>
-                    <span className="bg-red-500 text-white text-xs px-2 py-1 rounded-md">Tier I</span>
-                    <h4 className="font-semibold mt-1">The Streaker</h4>
-                    <p className="text-gray-500 text-sm">Complete a Quiz 3 days in a row</p>
-                </div>
-                <p className="text-gray-500">1/3</p>
-                </div>
-                <div className="w-full bg-gray-200 h-2 rounded-full mt-2">
-                    <div className="bg-red-500 h-2 rounded-full" style={{ width: "33%" }}></div>
-                </div>
+    
+            <div className="bg-white p-4 rounded-lg shadow-md flex item-center border-black">
+              <div className="mr-4">
+                  <span >
+                      < img className="w-40 h-40 rounded-md" src="Streak.jpg"/>
+                  </span>
+              </div>
+              <div className="flex-1">
+                  <div className="flex justify-between">
+                  <div>
+                      <span className="bg-[#2E588D] text-white text-xs px-2 py-1 rounded-md">Tier I</span>
+                      <h4 className="font-semibold mt-1">The Streaker</h4>
+                      <p className="text-gray-500 text-sm">Complete a Quiz 7 days in a row</p>
+                  </div>
+                  <p className="text-gray-500">1/7</p>
+                  </div>
+                  <div className="w-full bg-gray-200 h-2 rounded-full mt-2">
+                      <div className="bg-[#2E588D] h-2 rounded-full" style={{ width: "14%" }}></div>
+                  </div>
+              </div>
             </div>
+            <div className="bg-white p-4 rounded-lg shadow-md flex item-center border-black">
+              <div className="mr-4">
+                  <span >
+                      < img className="w-40 h-40 rounded-md" src="Cheetah.jpg"/>
+                  </span>
+              </div>
+              <div className="flex-1">
+                  <div className="flex justify-between">
+                  <div>
+                      <span className="bg-[#2E588D] text-white text-xs px-2 py-1 rounded-md">Tier I</span>
+                      <h4 className="font-semibold mt-1">The Cheetah</h4>
+                      <p className="text-gray-500 text-sm">Answer 20 questions correctly in timed mode.</p>
+                  </div>
+                  <p className="text-gray-500">12/20</p>
+                  </div>
+                  <div className="w-full bg-gray-200 h-2 rounded-full mt-2">
+                      <div className="bg-[#2E588D] h-2 rounded-full" style={{ width: "60%" }}></div>
+                  </div>
+              </div>
+            </div>
+            <div className="bg-white p-4 rounded-lg shadow-md flex item-center border-black">
+              <div className="mr-4">
+                  <span >
+                      < img className="w-40 h-40 rounded-md" src="TheNile.jpg"/>
+                  </span>
+              </div>
+              <div className="flex-1">
+                  <div className="flex justify-between">
+                  <div>
+                      <span className="bg-[#2E588D] text-white text-xs px-2 py-1 rounded-md">Tier I</span>
+                      <h4 className="font-semibold mt-1">The River Nile</h4>
+                      <p className="text-gray-500 text-sm">Answer 50 questions in one infinite mode game</p>
+                  </div>
+                  <p className="text-gray-500">22/50</p>
+                  </div>
+                  <div className="w-full bg-gray-200 h-2 rounded-full mt-2">
+                      <div className="bg-[#2E588D] h-2 rounded-full" style={{ width: "44%" }}></div>
+                  </div>
+              </div>
+            </div>
+            <div className="bg-white p-4 rounded-lg shadow-md flex item-center border-black">
+              <div className="mr-4">
+                  <span >
+                      < img className="w-40 h-40 rounded-md" src="SillyGoose.jpg"/>
+                  </span>
+              </div>
+              <div className="flex-1">
+                  <div className="flex justify-between">
+                  <div>
+                      <span className="bg-[#2E588D] text-white text-xs px-2 py-1 rounded-md">Tier I</span>
+                      <h4 className="font-semibold mt-1">Silly Goose</h4>
+                      <p className="text-gray-500 text-sm">Answer 25 questions incorrectly</p>
+                  </div>
+                  <p className="text-gray-500">5/25</p>
+                  </div>
+                  <div className="w-full bg-gray-200 h-2 rounded-full mt-2">
+                      <div className="bg-[#2E588D] h-2 rounded-full" style={{ width: "20%" }}></div>
+                  </div>
+              </div>
+            </div>
+            <div className="bg-white p-4 rounded-lg shadow-md flex item-center border-black">
+              <div className="mr-4">
+                  <span >
+                      < img className="w-40 h-40 rounded-md" src="MVP.jpg"/>
+                  </span>
+              </div>
+              <div className="flex-1">
+                  <div className="flex justify-between">
+                  <div>
+                      <span className="bg-[#2E588D] text-white text-xs px-2 py-1 rounded-md">Tier I</span>
+                      <h4 className="font-semibold mt-1">MVP</h4>
+                      <p className="text-gray-500 text-sm">End the week at the top of the leaderboard 5 times</p>
+                  </div>
+                  <p className="text-gray-500">0/5</p>
+                  </div>
+                  <div className="w-full bg-gray-200 h-2 rounded-full mt-2">
+                      <div className="bg-[#2E588D] h-2 rounded-full" style={{ width: "0%" }}></div>
+                  </div>
+              </div>
+            </div>
+            
           </div>
         </div> 
       </div>
