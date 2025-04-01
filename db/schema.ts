@@ -14,6 +14,16 @@ import {
 
 // Create achievement history tables
 
+export const userAchievementTable = pgTable("user_achievement", {
+  id: integer().primaryKey().generatedAlwaysAsIdentity(),
+  userID: text()
+    .notNull()
+    .default(sql`requesting_user_id()`),
+  units_completed: integer().notNull().default(0),
+  total_correct: integer().notNull().default(0),
+  total_incorrect: integer().notNull().default(0),
+});
+
 export const topicCategoryEnum = pgEnum("topic_category", [
   "ARRAYS_AND_STRINGS",
   "HASHMAPS_AND_SETS",
@@ -52,6 +62,9 @@ export const userProgressTable = pgTable("user_progress", {
   topic_section: varchar({ length: 255 }).notNull(),
   points: integer().notNull().default(0),
   completed: boolean().notNull().default(false),
+  num_correct: integer().notNull().default(0),
+  num_incorrect: integer().notNull().default(0),
+  date_completed: date(),
 });
 
 export const quizStatus = pgEnum("quiz_status", [

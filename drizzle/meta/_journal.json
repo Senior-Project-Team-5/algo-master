@@ -43,6 +43,27 @@
       "when": 1742559727437,
       "tag": "0005_odd_magus",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1743388204398,
+      "tag": "0006_abnormal_scrambler",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1743393332660,
+      "tag": "0007_marvelous_darwin",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1743481815835,
+      "tag": "0008_cuddly_nehzno",
+      "breakpoints": true
     }
   ]
 }

@@ -4,9 +4,10 @@ import {
   getUserProgress,
   getTopicName,
   getOneUserProgress,
+  getUserAchievements,
 } from "@/db/queries";
 import db from "@/db";
-import { userProgressTable } from "@/db/schema";
+import { userProgressTable, userAchievementTable } from "@/db/schema";
 import QuizClient from "./components/QuizClient";
 
 export default async function TopicPage({
@@ -24,6 +25,9 @@ export default async function TopicPage({
 
   // Get user Progress
   const userProgress = await getUserProgress();
+
+  // Get user Achievemnt
+  const userAchievement = await getUserAchievements();
 
   if (!userId || !topicSection || !userProgress) {
     redirect("/roadmap");
@@ -46,11 +50,15 @@ export default async function TopicPage({
   // check if the user is in-progress for this current topic quiz,
   // fetch the user progress data for this quiz section
   const quizProgress = await getOneUserProgress(topicSection.section_id);
+
   const topicID = topicSection.section_id;
   console.log(topicID);
+  console.log(quizProgress);
 
   // Default points to 0
   let initialPoints = 0;
+  let numCorrect = 0;
+  let numIncorrect = 0;
 
   // if the user has not started the quiz, create a new user progress entry
   if (!quizProgress) {
@@ -59,6 +67,8 @@ export default async function TopicPage({
       topic_section: topicSection.section_id,
       completed: false,
       points: 0,
+      num_correct: 0,
+      num_incorrect: 0,
     });
     console.log(
       "New user progress entry created for quiz section",
@@ -67,7 +77,18 @@ export default async function TopicPage({
   } else {
     // If user has existing progress, get their points
     initialPoints = quizProgress.points;
+    numCorrect = quizProgress.num_correct;
+    numIncorrect = quizProgress.num_incorrect;
     console.log("User has existing progress with points:", initialPoints);
+  }
+
+  // if the user is new, create a new user achievement entry
+  if (!userAchievement) {
+    await db.insert(userAchievementTable).values({
+      userID: userId,
+      units_completed: 0,
+    });
+    console.log("New user achievement entry created");
   }
 
   // Pass both topicID and initialPoints to QuizClient
@@ -77,6 +98,8 @@ export default async function TopicPage({
       topicID={topicID}
       topicCategory={topicSection.topic_category}
       initialPoints={initialPoints}
+      numCorrectAnswer={numCorrect}
+      numIncorrectAnswer={numIncorrect}
     />
   );
 }

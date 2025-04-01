@@ -21,23 +21,25 @@ interface QuizItem {
 
 interface QuestionsProps {
   initialQuestion: QuizItem;
-  setQuizStatus: React.Dispatch<React.SetStateAction<number>>;
   topic: string;
   language: string;
   topicID: string;
   initialPoints: number;
+  numCorrectAnswer: number;
+  numIncorrectAnswer: number;
 }
 
-const Quiz: React.FC<QuestionsProps> = ({ 
-  initialQuestion, 
-  setQuizStatus, 
-  topic, 
-  language, 
-  topicID, 
-  initialPoints 
+const Quiz: React.FC<QuestionsProps> = ({
+  initialQuestion,
+  topic,
+  language,
+  topicID,
+  initialPoints,
+  numCorrectAnswer,
+  numIncorrectAnswer,
 }) => {
   const router = useRouter();
-  
+
   // Question variables
   const [questionNumber, setQuestionNumber] = useState(1);
   const [question, setQuestion] = useState(initialQuestion.question);
@@ -52,18 +54,22 @@ const Quiz: React.FC<QuestionsProps> = ({
   const [explanation, setExplanation] = useState<string | null>();
   const [isLoading, setIsLoading] = useState(false);
   const [selectedChoice, setSelectedChoice] = useState<string | null>(null);
-  
+  const [totalUnitCorrectAnswer, setTotalUnitCorrectAnswer] =
+    useState(numCorrectAnswer);
+  const [totalUnitIncorrectAnswer, setTotalUnitIncorrectAnswer] =
+    useState(numIncorrectAnswer);
+
   // Animation state
   const [showContent, setShowContent] = useState(true);
   const [showLoading, setShowLoading] = useState(false);
   const [direction, setDirection] = useState(1); // 1 for right, -1 for left
-  
+
   // Initialize score with initialPoints
   const [score, setScore] = useState(initialPoints);
-  
+
   // Calculate progress percentage (score out of 10)
   const progressPercentage = (score / 10) * 100;
-  
+
   useEffect(() => {
     console.log("Quiz initialized with points:", initialPoints);
   }, [initialPoints]);
@@ -72,15 +78,26 @@ const Quiz: React.FC<QuestionsProps> = ({
     setIsAnswered(true);
     setSelectedChoice(choice);
     const correct = choice === correctAnswer;
-    console.log("Correct answer:", correctAnswer, "User choice:", choice, "Is correct:", correct);
+    console.log(
+      "Correct answer:",
+      correctAnswer,
+      "User choice:",
+      choice,
+      "Is correct:",
+      correct
+    );
     setIsCorrect(correct);
     setExplanation(explanation);
-    
+
     // Update score: +1 for correct, -1 for incorrect, keep between 0 and 10
     if (correct) {
       setScore(Math.min(score + 1, 10)); // Add 1 point but don't exceed 10
+      setTotalUnitCorrectAnswer(totalUnitCorrectAnswer + 1);
+ 
     } else {
       setScore(Math.max(score - 1, 0)); // Subtract 1 point but don't go below 0
+      setTotalUnitIncorrectAnswer(totalUnitIncorrectAnswer + 1);
+ 
     }
   };
 
@@ -93,29 +110,29 @@ const Quiz: React.FC<QuestionsProps> = ({
         },
         body: JSON.stringify({ query: decodeURIComponent(topic), language }),
       });
-      
+
       const data = await response.json();
       const nextQuestion = JSON.parse(data.answer);
-      
+
       // Set variables to next question
       setQuestion(nextQuestion.question);
       setCode(nextQuestion.code || "");
       setChoices(nextQuestion.choices);
       setCorrectAnswer(nextQuestion.answer);
       setResources(nextQuestion.resources);
-      
+
       // Reset tracking variables
       setIsAnswered(false);
       setIsCorrect(null);
       setExplanation(null);
       setSelectedChoice(null);
-      
+
       // Increment question number
       setQuestionNumber(questionNumber + 1);
-      
+
       // Animation direction for new content (coming from left)
       setDirection(-1);
-      
+
       // Hide loading and show content again
       setShowLoading(false);
       setTimeout(() => {
@@ -132,23 +149,49 @@ const Quiz: React.FC<QuestionsProps> = ({
     }
   };
 
-  const nextQuestion = () => {
+  const nextQuestion = async () => {
     if (score >= 10) {
-      setQuizStatus(2);
-      return;
+      try {
+        // Call API to mark quiz as completed
+        const response = await fetch("/api/quiz/progress", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            score: 10,
+            topicID,
+            completed: true,
+            unitCorrect: totalUnitCorrectAnswer,
+            unitIncorrect: totalUnitIncorrectAnswer,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to mark quiz as completed");
+        }
+
+        // Redirect to roadmap
+        router.push("/roadmap");
+      } catch (error) {
+        console.error("Error completing quiz:", error);
+        router.push("/roadmap");
+      } finally {
+        setIsLoading(false);
+      }
     }
-    
+
     // Animation direction for exit (going to right)
     setDirection(1);
-    
+
     // Hide current content
     setShowContent(false);
-    
+
     // After exit animation completes, show loading state
     setTimeout(() => {
       setShowLoading(true);
       setIsLoading(true);
-      
+
       // Start fetching next question
       fetchNextQuestion();
     }, 500);
@@ -162,12 +205,14 @@ const Quiz: React.FC<QuestionsProps> = ({
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           score,
-          topicID
+          topicID,
+          unitCorrect: totalUnitCorrectAnswer,
+          unitIncorrect: totalUnitIncorrectAnswer,
         }),
       });
-      
+
       const data = await response.json();
       console.log(data);
 
@@ -183,50 +228,50 @@ const Quiz: React.FC<QuestionsProps> = ({
   const contentVariants = {
     hidden: (direction: number) => ({
       x: direction > 0 ? "100%" : "-100%",
-      opacity: 0
+      opacity: 0,
     }),
     visible: {
       x: 0,
       opacity: 1,
       transition: {
         x: { type: "spring", stiffness: 300, damping: 30 },
-        opacity: { duration: 0.2 }
-      }
+        opacity: { duration: 0.2 },
+      },
     },
     exit: (direction: number) => ({
       x: direction > 0 ? "100%" : "-100%",
       opacity: 0,
       transition: {
         x: { type: "spring", stiffness: 300, damping: 30 },
-        opacity: { duration: 0.2 }
-      }
-    })
+        opacity: { duration: 0.2 },
+      },
+    }),
   };
 
   const loadingVariants = {
     hidden: {
-      opacity: 0
+      opacity: 0,
     },
     visible: {
       opacity: 1,
       transition: {
-        duration: 0.3
-      }
+        duration: 0.3,
+      },
     },
     exit: {
       opacity: 0,
       transition: {
-        duration: 0.3
-      }
-    }
+        duration: 0.3,
+      },
+    },
   };
 
   return (
     <div className="max-w-4xl mx-auto p-6">
       {/* Progress Bar */}
       <div className="mb-4 rounded-full bg-gray-200 h-3">
-        <div 
-          className="h-3 rounded-full bg-green-400 transition-all duration-500" 
+        <div
+          className="h-3 rounded-full bg-green-400 transition-all duration-500"
           style={{ width: `${progressPercentage}%` }}
         ></div>
         <div className="flex justify-between text-xs text-gray-500 mt-1">
@@ -237,8 +282,10 @@ const Quiz: React.FC<QuestionsProps> = ({
 
       {/* Quiz Header with Score and Exit Button */}
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-bold text-gray-800">{decodeURIComponent(topic)} Quiz</h2>
-        <Button 
+        <h2 className="text-xl font-bold text-gray-800">
+          {decodeURIComponent(topic)} Quiz
+        </h2>
+        <Button
           variant="default"
           className="text-sm px-4 py-1 text-gray-700 hover:bg-gray-100 border border-gray-300 rounded-full"
           onClick={saveProgressAndExit}
@@ -246,13 +293,13 @@ const Quiz: React.FC<QuestionsProps> = ({
           Exit Quiz
         </Button>
       </div>
-      
+
       {/* Content Container with Animation Wrapper */}
       <div className="relative min-h-[400px]">
         {/* Loading State */}
         <AnimatePresence>
           {showLoading && (
-            <motion.div 
+            <motion.div
               className="absolute inset-0 flex flex-col justify-center items-center bg-white shadow-lg rounded-lg p-12 z-10"
               initial="hidden"
               animate="visible"
@@ -260,7 +307,9 @@ const Quiz: React.FC<QuestionsProps> = ({
               variants={loadingVariants}
             >
               <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mb-4"></div>
-              <p className="text-gray-600 font-medium">Generating Question...</p>
+              <p className="text-gray-600 font-medium">
+                Generating Question...
+              </p>
             </motion.div>
           )}
         </AnimatePresence>
@@ -268,7 +317,7 @@ const Quiz: React.FC<QuestionsProps> = ({
         {/* Question Card */}
         <AnimatePresence mode="wait" custom={direction}>
           {showContent && (
-            <motion.div 
+            <motion.div
               className="bg-white shadow-lg rounded-lg overflow-hidden mb-6"
               key={questionNumber}
               custom={direction}
@@ -280,7 +329,7 @@ const Quiz: React.FC<QuestionsProps> = ({
               <div className="bg-gray-100 p-4 border-b">
                 <h2 className="text-lg font-medium">{question}</h2>
               </div>
-              
+
               {/* Code Section */}
               {code && (
                 <div className="p-4">
@@ -303,31 +352,49 @@ const Quiz: React.FC<QuestionsProps> = ({
                   <button
                     key={index}
                     className={`p-3 rounded-lg border text-left font-medium transition-all ${
-                      isAnswered 
+                      isAnswered
                         ? selectedChoice === item.choice
                           ? item.choice === correctAnswer
                             ? "bg-green-500 text-white border-green-600"
                             : "bg-red-500 text-white border-red-600"
                           : item.choice === correctAnswer
-                            ? "bg-green-500 text-white border-green-600"
-                            : "bg-gray-100 border-gray-300"
+                          ? "bg-green-500 text-white border-green-600"
+                          : "bg-gray-100 border-gray-300"
                         : selectedChoice === item.choice
-                          ? "bg-blue-100 border-blue-400"
-                          : "bg-gray-100 hover:bg-gray-200 border-gray-300"
+                        ? "bg-blue-100 border-blue-400"
+                        : "bg-gray-100 hover:bg-gray-200 border-gray-300"
                     }`}
-                    onClick={() => !isAnswered && checkAnswer(item.choice, item.explanation)}
+                    onClick={() =>
+                      !isAnswered && checkAnswer(item.choice, item.explanation)
+                    }
                     disabled={isAnswered}
                   >
                     <div className="flex items-center">
                       {isAnswered && (
                         <span className="mr-2">
                           {item.choice === correctAnswer ? (
-                            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                            <svg
+                              className="w-5 h-5"
+                              fill="currentColor"
+                              viewBox="0 0 20 20"
+                            >
+                              <path
+                                fillRule="evenodd"
+                                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                clipRule="evenodd"
+                              />
                             </svg>
                           ) : selectedChoice === item.choice ? (
-                            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                            <svg
+                              className="w-5 h-5"
+                              fill="currentColor"
+                              viewBox="0 0 20 20"
+                            >
+                              <path
+                                fillRule="evenodd"
+                                d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                                clipRule="evenodd"
+                              />
                             </svg>
                           ) : null}
                         </span>
@@ -340,11 +407,11 @@ const Quiz: React.FC<QuestionsProps> = ({
             </motion.div>
           )}
         </AnimatePresence>
-        
+
         {/* Explanation Card (only visible after submission) */}
         <AnimatePresence mode="wait" custom={direction}>
           {showContent && isAnswered && explanation && (
-            <motion.div 
+            <motion.div
               className="bg-white shadow-lg rounded-lg overflow-hidden mb-6"
               key={`explanation-${questionNumber}`}
               custom={direction}
@@ -361,13 +428,17 @@ const Quiz: React.FC<QuestionsProps> = ({
                 <div className="mt-4 text-sm text-gray-600">
                   <p className="font-medium">Resources:</p>
                   <p>
-                    <a href={resources} target="_blank" className="text-blue-500 hover:underline">
+                    <a
+                      href={resources}
+                      target="_blank"
+                      className="text-blue-500 hover:underline"
+                    >
                       {resources}
                     </a>
                   </p>
                 </div>
                 <div className="mt-6 text-center">
-                  <button 
+                  <button
                     className="px-6 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-full font-medium transition-colors"
                     onClick={nextQuestion}
                   >
