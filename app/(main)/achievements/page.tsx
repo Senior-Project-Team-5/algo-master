@@ -21,7 +21,7 @@ export default async function Dashboard() {
       <div className="flex flex-col md:flex-row p-6 bg-white min-h-screen">
         <div className="flex-1 p-6">
           {/* Statistics Section */}
-          <h3 className="text-2xl text-[#2E588D] font-extrabold mb-4">Statistics</h3>
+          <h3 className="text-3xl text-[#2E588D] font-extrabold mb-4">Statistics</h3>
           <div className="grid grid-cols-2 gap-4 mb-6 ">
             <div className="bg-white p-4 rounded-lg shadow-md flex items-center space-x-4 border-black">
               <span className="text-orange-500 text-3xl">
@@ -57,7 +57,7 @@ export default async function Dashboard() {
           </div>
   
           {/* Achievements Section */}
-          <h3 className="text-2xl text-[#2E588D] font-extrabold mb-4">Achievements</h3>
+          <h3 className="text-3xl text-[#2E588D] font-extrabold mb-4">Achievements</h3>
           <div className="overflow-y-auto">
 
             <div className={`bg-${quizNovice ? "green-100": "white"} p-4 rounded-lg shadow-md mb-4 flex items-center border-black`}>
