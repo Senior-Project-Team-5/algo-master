@@ -80,10 +80,10 @@ const HomePage = async () => {
     return ( 
         <div className="flex flex-row-reverse gap-[48px] px-6">
             <StickyWrapper>
-                <UserProgress 
+                {/*<UserProgress 
                     activeCourse="Linked Lists"
                     points={8}
-                />
+                />*/}
                 <div className="progress-sub">
                     <p className="font-bold text-progress">Your Progress</p>
                     <ProgressBar />

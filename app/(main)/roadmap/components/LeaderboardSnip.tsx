@@ -35,7 +35,7 @@ const LeaderboardSnippet = ({ leaderboard }: { leaderboard: User[] }) => {
       
       <Separator className="mt-4" />
       <div className="mt-3 text-sm text-center text-blue-500">
-        <a href="/roadmap" className="hover:underline">See Full Leaderboard</a>
+        <a href="/leaderboard" className="hover:underline">See Full Leaderboard</a>
       </div>
     </div>
   );
