@@ -26,7 +26,7 @@ export const Sidebar = ({ className }: Props) => {
         <SidebarItem label="Roadmap" href="/roadmap" iconSrc="roadmap.svg" />
         <SidebarItem
           label="Timed Mode"
-          href="timed-mode"
+          href="/timed-mode"
           iconSrc="timed-mode.svg"
         />
         <SidebarItem

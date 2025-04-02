@@ -89,6 +89,28 @@ export const userRoadmapHistoryTable = pgTable("user_roadmap_history", {
   quiz_status: quizStatus().notNull().default("IN_PROGRESS"),
 });
 
+export const timedModeDurationEnum = pgEnum("timed_mode_duration", [
+  "FIVE_MINUTES",
+  "TEN_MINUTES",
+  "TWENTY_MINUTES",
+]);
+
+export const userTimedModeTable = pgTable("user_timed_mode", {
+  id: integer().primaryKey().generatedAlwaysAsIdentity(),
+  userID: text()
+    .notNull()
+    .default(sql`requesting_user_id()`),
+  duration: timedModeDurationEnum().notNull(),
+  date_taken: date()
+    .notNull()
+    .default(sql`CURRENT_DATE`),
+  correct_answers: integer().notNull().default(0),
+  incorrect_answers: integer().notNull().default(0),
+  accuracy_percentage: integer().notNull().default(0),
+  points: integer().notNull().default(0),
+  topics_covered: text().array(),
+});
+
 /* 
 Database to store user history on previous completed timed mode quizzes' statistics,
 including userID, specific rank, date taken, the number of correct answers, 
