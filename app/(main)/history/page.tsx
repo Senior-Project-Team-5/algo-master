@@ -111,7 +111,7 @@ export default function Dashboard() {
       {/* Animated Modal - prolly use similar thing for achievements (a pop up) */}
       <Transition appear show={isOpen} as={motion.div} initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.8, opacity: 0 }}>
         <Dialog as="div" className="relative z-50" onClose={() => setIsOpen(false)}>
-          <div className="fixed inset-0 bg-black bg-opacity-30 backdrop-blur-sm flex items-center justify-center">
+          <div className="fixed inset-0 bg-opacity-30 backdrop-blur-sm flex items-center justify-center">
             <Dialog.Panel className="bg-white p-6 rounded-lg shadow-lg w-[90%] max-w-md">
               <Dialog.Title className="text-xl font-bold text-[#2E588D]">Attempt Details</Dialog.Title>
               <p className="text-gray-600 mt-2">Mode: {selectedTask?.mode}</p>
