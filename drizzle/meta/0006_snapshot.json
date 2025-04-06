@@ -1,4 +1,5 @@
 {
+
   "id": "38f451b1-fdb5-4906-bb5d-dd71ccf89624",
   "prevId": "7efb67f6-1c1e-4068-82f5-3f5bc540274e",
   "version": "7",
@@ -112,8 +113,10 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
+
     "public.user_infinite_mode": {
       "name": "user_infinite_mode",
+
       "schema": "",
       "columns": {
         "id": {
@@ -123,7 +126,9 @@
           "notNull": true,
           "identity": {
             "type": "always",
+
             "name": "user_infinite_mode_id_seq",
+
             "schema": "public",
             "increment": "1",
             "startWith": "1",
@@ -177,6 +182,7 @@
         },
         "accuracy_percentage": {
           "name": "accuracy_percentage",
+
           "type": "integer",
           "primaryKey": false,
           "notNull": true,
@@ -346,6 +352,7 @@
         "Expert"
       ]
     },
+
     "public.quiz_status": {
       "name": "quiz_status",
       "schema": "public",

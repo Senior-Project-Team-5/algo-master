@@ -4,53 +4,56 @@ import { UnitButton } from "./unit-button";
 import { index } from "drizzle-orm/pg-core";
 
 type Props = {
-    id: number;
-    topic_name: string;
-    // section_id: string;
-    // prerequisite_id: string | null;
-    // points_required: number;
-}
+  id: number;
+  topic_name: string;
+  // section_id: string;
+  // prerequisite_id: string | null;
+  // points_required: number;
+};
 
 export const Unit = async ({ id, topic_name }: Props) => {
-    const [userProgress, topicData] = await Promise.all([
-        getUserProgress(),
-        getTopicData(topic_name)
-    ]);
+  /* DA YUAN: For optimization, we can run getUserProgress() when the user goes to the roadmap instead of running it for each unit. We
+      pass it down as props for the Unit Component */
+  const [userProgress, topicData] = await Promise.all([
+    getUserProgress(),
+    getTopicData(topic_name),
+  ]);
 
-    if (!userProgress || !topicData) return null;
+  if (!userProgress || !topicData) return null;
 
-    return (
-        <>
-            <UnitBanner title={topic_name} />
-            <div className="flex items-center flex-col relative">
-                {topicData.map((topic, index) => {
-                    const prerequisiteProgress = topic.prerequisite_id 
-                        ? userProgress.find(progress => 
-                            progress.topic_section === topic.prerequisite_id && 
-                            progress.completed
-                          )
-                        : true;
+  return (
+    <>
+      <UnitBanner title={topic_name} />
+      <div className="flex items-center flex-col relative">
+        {topicData.map((topic, index) => {
+          const prerequisiteProgress = topic.prerequisite_id
+            ? userProgress.find(
+                (progress) =>
+                  progress.topic_section === topic.prerequisite_id &&
+                  progress.completed
+              )
+            : true;
 
-                    const currentProgress = userProgress.find(
-                        progress => progress.topic_section === topic.section_id
-                    );
+          const currentProgress = userProgress.find(
+            (progress) => progress.topic_section === topic.section_id
+          );
 
-                    const isLocked = !prerequisiteProgress;
+          const isLocked = !prerequisiteProgress;
 
-                    return (
-                        <UnitButton
-                            index={index}
-                            key={topic.id} 
-                            id={topic.id}
-                            totalCount={topicData.length}
-                            topic_name={topic.section_name}
-                            section_id={topic.section_id} 
-                            locked={isLocked}
-                            pointsEarned={currentProgress?.points ?? 0}
-                        />
-                    );
-                })}
-            </div>
-        </>
-    );
+          return (
+            <UnitButton
+              index={index}
+              key={topic.id}
+              id={topic.id}
+              totalCount={topicData.length}
+              topic_name={topic.section_name}
+              section_id={topic.section_id}
+              locked={isLocked}
+              pointsEarned={currentProgress?.points ?? 0}
+            />
+          );
+        })}
+      </div>
+    </>
+  );
 };
