@@ -68,6 +68,7 @@ export const userInfiniteModeTable = pgTable("user_infinite_mode", {
     correct_answers: integer().notNull().default(0),
     incorrect_answers: integer().notNull().default(0),
     accuracy_percentage: integer().notNull().default(0),
+    language: text(),
 })
 
 

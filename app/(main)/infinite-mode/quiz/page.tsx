@@ -124,6 +124,7 @@ const InfiniteQuizPage = () => {
                 difficulty: difficulty,
                 correct: score.correct,
                 incorrect: score.incorrect,
+                language: language,
             }),
         });
 

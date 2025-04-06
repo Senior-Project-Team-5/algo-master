@@ -11,7 +11,7 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
 
-        const { points, difficulty, correct, incorrect } = await req.json();
+        const { points, difficulty, correct, incorrect, language } = await req.json();
         console.log(userId, points, difficulty, correct, incorrect);
 
         const accuracyPercentage = Math.round((correct / (correct + incorrect)) * 100);
@@ -24,6 +24,7 @@ export async function POST(req: NextRequest) {
             correct_answers: correct,
             incorrect_answers: incorrect,
             accuracy_percentage: accuracyPercentage,
+            language: language,
         }).returning()
 
         console.log("Saved user infinite mode progress:", currentProgress);

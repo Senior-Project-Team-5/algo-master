@@ -1,0 +1,1 @@
+ALTER TABLE "user_infinite_mode" ADD COLUMN "language" text;
