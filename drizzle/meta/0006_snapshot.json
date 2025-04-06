@@ -1,5 +1,6 @@
 {
-  "id": "937c2824-cd48-43c6-ba61-ff2f5088214e",
+
+  "id": "38f451b1-fdb5-4906-bb5d-dd71ccf89624",
   "prevId": "7efb67f6-1c1e-4068-82f5-3f5bc540274e",
   "version": "7",
   "dialect": "postgresql",
@@ -112,8 +113,10 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.user_achievement": {
-      "name": "user_achievement",
+
+    "public.user_infinite_mode": {
+      "name": "user_infinite_mode",
+
       "schema": "",
       "columns": {
         "id": {
@@ -123,7 +126,9 @@
           "notNull": true,
           "identity": {
             "type": "always",
-            "name": "user_achievement_id_seq",
+
+            "name": "user_infinite_mode_id_seq",
+
             "schema": "public",
             "increment": "1",
             "startWith": "1",
@@ -140,8 +145,44 @@
           "notNull": true,
           "default": "requesting_user_id()"
         },
-        "units_completed": {
-          "name": "units_completed",
+        "difficulty": {
+          "name": "difficulty",
+          "type": "difficulties",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "date_taken": {
+          "name": "date_taken",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "CURRENT_DATE"
+        },
+        "points": {
+          "name": "points",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "correct_answers": {
+          "name": "correct_answers",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "incorrect_answers": {
+          "name": "incorrect_answers",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "accuracy_percentage": {
+          "name": "accuracy_percentage",
+
           "type": "integer",
           "primaryKey": false,
           "notNull": true,
@@ -301,6 +342,17 @@
     }
   },
   "enums": {
+    "public.difficulties": {
+      "name": "difficulties",
+      "schema": "public",
+      "values": [
+        "Easy",
+        "Medium",
+        "Hard",
+        "Expert"
+      ]
+    },
+
     "public.quiz_status": {
       "name": "quiz_status",
       "schema": "public",

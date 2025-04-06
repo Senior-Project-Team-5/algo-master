@@ -111,34 +111,17 @@ export const userTimedModeTable = pgTable("user_timed_mode", {
   topics_covered: text().array(),
 });
 
-/* 
-Database to store user history on previous completed timed mode quizzes' statistics,
-including userID, specific rank, date taken, the number of correct answers, 
-the number of incorrect answers, accuracy percentage (# of correct answers / total questions * 100),
-and points earned.
+export const difficulties = pgEnum("difficulties", ["Easy", "Medium", "Hard", "Expert"])
 
-userID: text, foreign key referencing Users.id (from Clerk)
-rank: varchar
-date_taken: date
-correct_answers: integer
-incorrect_answers: integer
-accuracy_percentage: integer
-points_earned: integer
-*/
+export const userInfiniteModeTable = pgTable("user_infinite_mode", {
+    id: integer().primaryKey().generatedAlwaysAsIdentity(),
+    userID: text().notNull().default(sql`requesting_user_id()`),
+    difficulty: difficulties().notNull(),
+    date_taken: date().notNull().default(sql`CURRENT_DATE`),
+    points: integer().notNull().default(0),
+    correct_answers: integer().notNull().default(0),
+    incorrect_answers: integer().notNull().default(0),
+    accuracy_percentage: integer().notNull().default(0),
+    language: text(),
+})
 
-/* 
-Database to store user history on previous completed infinite mode quizzes' statistics,
-including userID, specific rank, date taken, the number of correct answers, 
-the number of incorrect answers, accuracy percentage (# of correct answers / total questions * 100),
-points earned, and the time interval (started at and ended at) for the session of the quiz.
-
-userID: text, foreign key referencing Users.id (from Clerk)
-rank: varchar
-date_taken: date
-correct_answers: integer
-incorrect_answers: integer
-accuracy_percentage: integer
-points_earned: integer
-started_at: timestamp
-ended_at: timestamp
-*/
