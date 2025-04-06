@@ -1,5 +1,6 @@
 'use client';
 
+import { Suspense } from 'react';
 import { useEffect, useState, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
@@ -21,9 +22,8 @@ interface QuestionData {
   resources: string;
 }
 
-const InfiniteQuizPage = () => {
+function QuizContent() {
   const router = useRouter();
-
   const searchParams = useSearchParams();
   const difficulty = searchParams.get('difficulty') || '';
   const topicsParam = searchParams.get('topics') || '';
@@ -111,7 +111,6 @@ const InfiniteQuizPage = () => {
     fetchQuestion();
   };
 
-
   const saveProgressAndExit = async () => {
     try {
         const response = await fetch("/api/infinite-mode/progress", {
@@ -140,7 +139,6 @@ const InfiniteQuizPage = () => {
         router.push("/infinite-mode");
     }
   }
-
 
   if (error) {
     return (
@@ -263,6 +261,18 @@ const InfiniteQuizPage = () => {
         )}
       </div>
     </div>
+  );
+}
+
+const InfiniteQuizPage = () => {
+  return (
+    <Suspense fallback={
+      <div className="flex justify-center items-center h-64">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      </div>
+    }>
+      <QuizContent />
+    </Suspense>
   );
 };
 
