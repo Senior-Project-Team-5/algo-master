@@ -24,6 +24,11 @@ export const Sidebar = ({ className }: Props) => {
       </Link>
       <div className="flex flex-col gap-y-2 flex-1">
         <SidebarItem label="Roadmap" href="/roadmap" iconSrc="roadmap.svg" />
+        <SidebarItem 
+          label="Exam"
+          href="/exam"
+          iconSrc="exam.svg"
+        />
         <SidebarItem
           label="Timed Mode"
           href="/timed-mode"
@@ -31,7 +36,7 @@ export const Sidebar = ({ className }: Props) => {
         />
         <SidebarItem
           label="Infinite Mode"
-          href="infinite-mode"
+          href="/infinite-mode"
           iconSrc="infinite-mode.svg"
         />
         <SidebarItem
