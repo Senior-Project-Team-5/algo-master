@@ -2,7 +2,7 @@ import { cache } from "react";
 import db from "./index";
 import { auth } from "@clerk/nextjs/server";
 import { eq, and } from "drizzle-orm";
-import { userProgressTable, topicsTable, userAchievementTable } from "./schema";
+import { userProgressTable, topicsTable, userAchievementTable, userTimedModeTable, userInfiniteModeTable } from "./schema";
 
 // Shared function to get userId with caching
 export const getCachedUserId = cache(async () => {
@@ -49,6 +49,34 @@ export const getOneUserProgress = cache(async (topic_section: string) => {
       eq(userProgressTable.userID, userId),
       eq(userProgressTable.topic_section, topic_section)
     ),
+  });
+
+  return data;
+});
+
+export const getUserTimedModeHistory = cache(async () => {
+  const userId = await getCachedUserId();
+
+  if (!userId) {
+    return null;
+  }
+
+  const data = await db.query.userTimedModeTable .findMany({
+    where: eq(userTimedModeTable .userID, userId),
+  });
+
+  return data;
+});
+
+export const getUserInfiniteModeHistory = cache(async () => {
+  const userId = await getCachedUserId();
+
+  if (!userId) {
+    return null;
+  }
+
+  const data = await db.query.userInfiniteModeTable.findMany({
+    where: eq(userInfiniteModeTable .userID, userId),
   });
 
   return data;
