@@ -13,15 +13,15 @@ export default async function Dashboard() {
   const quizNoviceProgress = quizNovice ? 100 : (unitsCompleted/ 3) * 100
 
   const quizMaster = unitsCompleted > 15 
-  const quizMasterProgress = quizNovice ? 100 : (unitsCompleted/ 15) * 100
+  const quizMasterProgress = quizMaster ? 100 : (unitsCompleted/ 15) * 100
 
   const quizExpert = unitsCompleted == 26 
-  const quizExpertProgress = quizNovice ? 100 : (unitsCompleted/ 26) * 100
+  const quizExpertProgress = quizExpert ? 100 : (unitsCompleted/ 26) * 100
     return (
       <div className="flex flex-col md:flex-row p-6 bg-white min-h-screen">
         <div className="flex-1 p-6">
           {/* Statistics Section */}
-          <h3 className="text-3xl text-[#2E588D] font-extrabold mb-4">Statistics</h3>
+          <h3 className="text-2xl text-[#2E588D] font-extrabold mb-4">Statistics</h3>
           <div className="grid grid-cols-2 gap-4 mb-6 ">
             <div className="bg-white p-4 rounded-lg shadow-md flex items-center space-x-4 border-black">
               <span className="text-orange-500 text-3xl">
@@ -57,7 +57,7 @@ export default async function Dashboard() {
           </div>
   
           {/* Achievements Section */}
-          <h3 className="text-3xl text-[#2E588D] font-extrabold mb-4">Achievements</h3>
+          <h3 className="text-2xl text-[#2E588D] font-extrabold mb-4">Achievements</h3>
           <div className="overflow-y-auto">
 
             <div className={`bg-${quizNovice ? "green-100": "white"} p-4 rounded-lg shadow-md mb-4 flex items-center border-black`}>
@@ -76,7 +76,7 @@ export default async function Dashboard() {
                   <p className="text-gray-500">{quizNovice ? "5/5" : `${unitsCompleted}/5`}</p>
                   </div>
                   <div className="w-full bg-gray-200 h-2 rounded-full mt-2">
-                      <div className="bg-[#2E588D] h-2 rounded-full" style={{ width: `${quizNoviceProgress}$` }}></div>
+                      <div className="bg-[#2E588D] h-2 rounded-full" style={{ width: `${quizNoviceProgress}%` }}></div>
                   </div>
               </div>
             </div>
@@ -96,7 +96,7 @@ export default async function Dashboard() {
                   <p className="text-gray-500">{quizMaster ? "15/15" : `${unitsCompleted}/15`}</p>
                   </div>
                   <div className="w-full bg-gray-200 h-2 rounded-full mt-2">
-                      <div className="bg-[#2E588D] h-2 rounded-full" style={{ width: `${quizMasterProgress}$` }}></div>
+                      <div className="bg-[#2E588D] h-2 rounded-full" style={{ width: `${quizMasterProgress}%` }}></div>
                   </div>
               </div>
             </div>
@@ -116,7 +116,7 @@ export default async function Dashboard() {
                   <p className="text-gray-500">{quizExpert ? "26/26" : `${unitsCompleted}/26`}</p>
                   </div>
                   <div className="w-full bg-gray-200 h-2 rounded-full mt-2">
-                      <div className="bg-[#2E588D] h-2 rounded-full" style={{ width: `${quizExpertProgress}$` }}></div>
+                      <div className="bg-[#2E588D] h-2 rounded-full" style={{ width: `${quizExpertProgress}%` }}></div>
                   </div>
               </div>
             </div>
