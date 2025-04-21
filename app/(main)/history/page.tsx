@@ -6,23 +6,27 @@ import { getUserTimedModeHistory, getUserInfiniteModeHistory } from "@/db/querie
 export default async function Dashboard() {
 
   const userTimedModeHistory = await getUserTimedModeHistory() || []
-  const userInfiniteModeHistory =  await getUserInfiniteModeHistory() || []
+  //const userInfiniteModeHistory =  await getUserInfiniteModeHistory() || []
 
-  console.log(userInfiniteModeHistory)
+  //console.log(userInfiniteModeHistory)
   const updatedUserTimedModeHistory = userTimedModeHistory.map(({ duration,...rest }) => ({
     type: duration,
     mode: "Timed",
     ...rest,
   }));
 
+  /*
   const updatedUserInfiniteModeHistory = userInfiniteModeHistory.map(({ difficulty,...rest }) => ({
     type: difficulty,
     mode: "Infinite",
     topics_covered: [],
     ...rest,
   }));
+  */
 
-  const userModeHistory = [...updatedUserTimedModeHistory, ...updatedUserInfiniteModeHistory]
+  const userModeHistory = updatedUserTimedModeHistory
+
+  //const userModeHistory = [...updatedUserTimedModeHistory, ...updatedUserInfiniteModeHistory]
   console.log(userModeHistory)
 
   
