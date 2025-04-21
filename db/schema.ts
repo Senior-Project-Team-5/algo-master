@@ -125,3 +125,15 @@ export const userInfiniteModeTable = pgTable("user_infinite_mode", {
     language: text(),
 })
 
+export const userExamTable = pgTable("user_exam", {
+  id: integer().primaryKey().generatedAlwaysAsIdentity(),
+  user_id: text().notNull().default(sql`requesting_user_id()`),
+  exam_topic: text().notNull(),
+  date_taken: date().notNull().default(sql`CURRENT_DATE`),
+  pass: boolean().notNull().default(false),
+  score: integer().notNull().default(0),
+  correct_answers: integer().notNull().default(0),
+  incorrect_answers: integer().notNull().default(0),
+  accuracy_percentage: integer().notNull().default(0),
+  language: text(),
+})
