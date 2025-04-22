@@ -80,13 +80,13 @@ function ResultsContent() {
       >
         <Card className="overflow-hidden">
           <div className={`${passed ? 'bg-gradient-to-r from-green-500 to-blue-600' : 'bg-gradient-to-r from-orange-500 to-red-600'} p-6 text-white text-center relative`}>
-            <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 bg-yellow-400 rounded-full p-4 border-4 border-white">
+            {/* <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 bg-yellow-400 rounded-full p-4 border-4 border-white">
               {passed ? (
                 <Trophy className="h-8 w-8 text-yellow-800" />
               ) : (
                 <Award className="h-8 w-8 text-yellow-800" />
               )}
-            </div>
+            </div> */}
             <h2 className="text-2xl font-bold mb-1">Exam Results</h2>
             <p className="mb-2">{formatTopicName(topic)}</p>
             <div className={`inline-flex items-center gap-2 px-4 py-1 rounded-full ${passed ? 'bg-green-600' : 'bg-red-600'} text-white font-bold`}>
