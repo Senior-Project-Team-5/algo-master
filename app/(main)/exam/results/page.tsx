@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -8,7 +8,7 @@ import { motion } from "framer-motion";
 import { Trophy, ArrowRight, Home, RotateCcw, Award, CheckCircle, XCircle } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
-const ExamResultsPage = () => {
+function ResultsContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   
@@ -180,6 +180,16 @@ const ExamResultsPage = () => {
       </motion.div>
     </div>
   );
-};
+}
 
-export default ExamResultsPage;
+export default function ExamResultsPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex justify-center items-center h-64">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      </div>
+    }>
+      <ResultsContent />
+    </Suspense>
+  );
+}
