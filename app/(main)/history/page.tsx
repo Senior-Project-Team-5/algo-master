@@ -41,7 +41,7 @@ export default async function Dashboard() {
                 <th className="px-6 py-3 text-left text-gray-600 font-medium">Type</th>
                 <th className="px-6 py-3 text-left text-gray-600 font-medium">Points</th>
                 <th className="px-6 py-3 text-left text-gray-600 font-medium">Correct Answers</th>
-                <th className="px-6 py-3 text-left text-gray-600 font-medium">Wrong Ansers</th>
+                <th className="px-6 py-3 text-left text-gray-600 font-medium">Wrong Answers</th>
                 <th className="px-6 py-3 text-left text-gray-600 font-medium">Accuracy</th>
                 <th className="px-6 py-3 text-left text-gray-600 font-medium">Topics</th>
 
