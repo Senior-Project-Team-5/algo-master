@@ -10,7 +10,7 @@ export default async function Dashboard() {
   const percentCorrect = Math.round((userAchievements?.total_correct ?? 0) / ((userAchievements?.total_correct ?? 0) + (userAchievements?.total_incorrect ?? 0)) * 100);
   
   const quizNovice = unitsCompleted > 5
-  const quizNoviceProgress = quizNovice ? 100 : (unitsCompleted/ 3) * 100
+  const quizNoviceProgress = quizNovice ? 100 : (unitsCompleted/ 5) * 100
 
   const quizMaster = unitsCompleted > 15 
   const quizMasterProgress = quizMaster ? 100 : (unitsCompleted/ 15) * 100
