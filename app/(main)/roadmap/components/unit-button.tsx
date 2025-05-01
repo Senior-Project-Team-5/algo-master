@@ -69,7 +69,7 @@ export const UnitButton = ({ id, index, totalCount, topic_name, section_id, lock
                         value={percentage}
                         styles={{
                             path: {
-                                stroke: '#4ade80',
+                                stroke: '#bb6632',
                             },
                             trail: {
                                 stroke: '#e5e7eb',
@@ -77,7 +77,7 @@ export const UnitButton = ({ id, index, totalCount, topic_name, section_id, lock
                         }}
                     >
                         <div className="relative group">
-                            <div className="absolute left-1/2 -top-14 -translate-x-1/2 px-3 py-2.5 border-2 font-bold text-green-500 bg-white rounded-xl tracking-wide z-20 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                            <div className="absolute left-1/2 -top-14 -translate-x-1/2 px-3 py-2.5 border-2 font-bold text-[#2E588D] bg-white rounded-xl tracking-wide z-20 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
                                 {section_id} {topic_name}
                                 {locked && <div className="text-sm font-normal text-red-500">Complete previous level(s) to unlock</div>}
                                 <div className="absolute left-1/2 bottom-0 w-0 h-0 border-x-8 border-x-transparent border-t-8 transform -translate-x-1/2 translate-y-full" />
@@ -98,12 +98,11 @@ export const UnitButton = ({ id, index, totalCount, topic_name, section_id, lock
                                     <Button
                                         size={"rounded"} 
                                         variant="secondary"
-                                        className="h-[70px] w-[70px] border-b-8"
+                                        className="h-[70px] w-[70px] bg-[#bb6632] hover:bg-[#cb723c] border-b-8"
                                     >
                                         <Icon 
                                             className={cn(
                                                 "h-10 w-10",
-                                                "fill-primary-foreground text-primary-foreground",
                                                 isCompleted && "fill-none stroke-[4]"
                                             )}
                                         />
