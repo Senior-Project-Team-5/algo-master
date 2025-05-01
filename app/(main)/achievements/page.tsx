@@ -22,7 +22,7 @@ export default async function Dashboard() {
         <div className="flex-1 p-6">
           {/* Statistics Section */}
           <h3 className="text-2xl text-[#2E588D] font-extrabold mb-4">Statistics</h3>
-          <div className="grid grid-cols-2 gap-4 mb-6 ">
+          <div className="gap-4 mb-6 ">
             <div className="bg-white p-4 rounded-lg shadow-md flex items-center space-x-4 border-black">
               <span className="text-orange-500 text-3xl">
                 <img src="percentage.png"/>
@@ -76,7 +76,7 @@ export default async function Dashboard() {
                   <p className="text-gray-500">{quizNovice ? "5/5" : `${unitsCompleted}/5`}</p>
                   </div>
                   <div className="w-full bg-gray-200 h-2 rounded-full mt-2">
-                      <div className="bg-[#2E588D] h-2 rounded-full" style={{ width: `${quizNoviceProgress}%` }}></div>
+                      <div className="bg-[#bb6632] h-2 rounded-full" style={{ width: `${quizNoviceProgress}%` }}></div>
                   </div>
               </div>
             </div>
@@ -96,7 +96,7 @@ export default async function Dashboard() {
                   <p className="text-gray-500">{quizMaster ? "15/15" : `${unitsCompleted}/15`}</p>
                   </div>
                   <div className="w-full bg-gray-200 h-2 rounded-full mt-2">
-                      <div className="bg-[#2E588D] h-2 rounded-full" style={{ width: `${quizMasterProgress}%` }}></div>
+                      <div className="bg-[#bb6632] h-2 rounded-full" style={{ width: `${quizMasterProgress}%` }}></div>
                   </div>
               </div>
             </div>
@@ -116,7 +116,7 @@ export default async function Dashboard() {
                   <p className="text-gray-500">{quizExpert ? "26/26" : `${unitsCompleted}/26`}</p>
                   </div>
                   <div className="w-full bg-gray-200 h-2 rounded-full mt-2">
-                      <div className="bg-[#2E588D] h-2 rounded-full" style={{ width: `${quizExpertProgress}%` }}></div>
+                      <div className="bg-[#bb6632] h-2 rounded-full" style={{ width: `${quizExpertProgress}%` }}></div>
                   </div>
               </div>
             </div>

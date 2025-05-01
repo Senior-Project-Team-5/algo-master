@@ -18,7 +18,7 @@ interface LeaderboardUser {
 }
 
 const leaderboardTypes = [
-  { id: "roadmap", name: "Roadmap Progress", icon: <Trophy className="h-5 w-5" />, label: "Sections" },
+  { id: "roadmap", name: "Roadmap Progress", icon: <Trophy className="h-5 #2E588D w-5" />, label: "Sections" },
   { id: "timed-5", name: "Timed (5m)", icon: <Clock className="h-5 w-5" />, label: "Points" },
   { id: "timed-10", name: "Timed (10m)", icon: <Clock className="h-5 w-5" />, label: "Points" },
   { id: "timed-20", name: "Timed (20m)", icon: <Clock className="h-5 w-5" />, label: "Points" },
@@ -89,7 +89,7 @@ const LeaderboardPage = () => {
               {currentLeaderboardType.icon}
             </div>
           )}
-          <h1 className="text-center font-bold text-neutral-800 text-2xl">{currentLeaderboardType.name}</h1>
+          <h1 className="text-center font-bold text-[#2E588D] text-3xl">{currentLeaderboardType.name}</h1>
         </div>
         
         <p className="text-muted-foreground text-center text-lg mb-6">

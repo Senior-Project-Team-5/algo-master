@@ -1,5 +1,4 @@
 import { getUserProgress } from "@/db/queries";
-import 'bootstrap/dist/css/bootstrap.css';
 
 // Server component to fetch and display progress bar
 export default async function ProgressBar() {
@@ -16,9 +15,9 @@ export default async function ProgressBar() {
   const progress = (completedLessons / totalLessons) * 100;
 
   return (
-    <div className="progress">
+    <div className="progress-bar rounded-lg">
       <div
-        className="progress-bar progress-bar-warning progress-bar-striped"
+        className="progress-bar-completed rounded-md bg-[#bb6632] text-white"
         role="progressbar"
         aria-valuenow={progress}
         aria-valuemin={0}
