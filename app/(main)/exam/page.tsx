@@ -87,7 +87,7 @@ const ExamPage = () => {
     return (
         <div className="max-w-5xl mx-auto p-6">
             <div className="mb-8 text-center">
-                <h1 className="text-3xl font-bold mb-2">Algorithm Mastery Exam</h1>
+                <h1 className="text-3xl text-[#2E588D] font-bold mb-2">Algorithm Mastery Exam</h1>
                 <p className="text-gray-600">Choose a topic and test your knowledge with curated exercises</p>
             </div>
 
@@ -123,7 +123,7 @@ const ExamPage = () => {
                         onClick={() => setSelectedTopic(topic)}
                     >
                         <CardHeader className="pb-2">
-                            <CardTitle className="text-xl flex items-center gap-2">
+                            <CardTitle className="text-xl flex items-center text-[#bb6632] gap-2">
                                 <BookOpen className="h-5 w-5" />
                                 {formatTopicName(topic)}
                             </CardTitle>
@@ -149,7 +149,7 @@ const ExamPage = () => {
                 <Button
                     size="lg"
                     variant="primary"
-                    className="px-8 py-2"
+                    className="px-8 py-2 "
                     disabled={!selectedTopic}
                     onClick={() => selectedTopic && handleTopicClick(selectedTopic)}
                 >

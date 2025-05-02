@@ -16,7 +16,7 @@ export default async function TimedModePage() {
   
   return (
     <div className="container mx-auto py-8">
-      <h1 className="text-3xl font-bold mb-6">Timed Mode</h1>
+      <h1 className="text-3xl text-[#2E588D] font-bold mb-6">Timed Mode</h1>
       {!hasCompletedTopics ? (
         <div className="bg-amber-50 border-l-4 border-amber-500 p-4 mb-8">
           <p className="text-amber-700">

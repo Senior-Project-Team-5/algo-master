@@ -271,7 +271,7 @@ const Quiz: React.FC<QuestionsProps> = ({
       {/* Progress Bar */}
       <div className="mb-4 rounded-full bg-gray-200 h-3">
         <div
-          className="h-3 rounded-full bg-green-400 transition-all duration-500"
+          className="h-3 rounded-full bg-[#2E588D] transition-all duration-500"
           style={{ width: `${progressPercentage}%` }}
         ></div>
         <div className="flex justify-between text-xs text-gray-500 mt-1">
