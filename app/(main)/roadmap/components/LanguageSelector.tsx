@@ -13,11 +13,16 @@ const languages = [
 
 
 const LanguageSelector = () =>{
-    const [selectedLanguage, setSelectedLanguage] = useState<string>(localStorage.getItem("language") || "python");
-
-    useEffect(() =>{
+    const [selectedLanguage, setSelectedLanguage] = useState<string>(() => {
+        if (typeof window !== "undefined") {
+          return localStorage.getItem("language") || "Python";
+        }
+        return "Python"; 
+      });
+      
+      useEffect(() => {
         localStorage.setItem("language", selectedLanguage);
-    },[selectedLanguage])
+      }, [selectedLanguage]);
 
     return(
         <div className="mb-8">
