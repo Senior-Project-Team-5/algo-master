@@ -1,16 +1,14 @@
 import { FeedWrapper } from "@/components/feed-wrapper";
 import { StickyWrapper } from "@/components/sticky-wrapper";
 import { Header } from "./header";
-import { UserProgress } from "@/components/user-progress";
 import { Unit } from "./components/unit";
-import 'bootstrap/dist/css/bootstrap.css';
-import { getUserProgress } from "@/db/queries";
-import React, { useState, useEffect } from "react";
 import ProgressBar from "./components/ProgressBar";
 import { Separator } from "@/components/ui/seperator";
 import LeaderboardSnip from "./components/LeaderboardSnip";
+import LanguageSelector from "./components/LanguageSelector";
+
+import 'bootstrap/dist/css/bootstrap.css';
 import "../../globals.css";
-// import { getTopics } from "@/db/queries";
 
 
 
@@ -63,19 +61,7 @@ const topicSections = [
 ]
 
 const HomePage = async () => {
-    // const topics = await getTopics();
-    const leaderboard = [
-            { userId: "1", userName: "John Smith", userImageSrc: "/user2.png", points: 32 },
-            { userId: "2", userName: "Jack Smith", userImageSrc: "/user3.png", points: 32 },
-            { userId: "3", userName: "Mary Smith", userImageSrc: "/user1.png", points: 30 },
-            { userId: "4", userName: "Michael Smith", userImageSrc: "/user4.png", points: 25 },
-            { userId: "5", userName: "Jane Smith", userImageSrc: "/user5.png", points: 24 },
-            { userId: "6", userName: "Me", userImageSrc: "/user6.png", points: 17 },
-            { userId: "7", userName: "Lisa Smith", userImageSrc: "/user7.png", points: 16 },
-            { userId: "8", userName: "May Smith", userImageSrc: "/user8.png", points: 15 },
-            { userId: "9", userName: "Chris Smith", userImageSrc: "/user9.png", points: 14 },
-        // Add more users as needed
-      ];
+
 
     return ( 
         <div className="flex flex-row-reverse gap-[48px] px-6">
@@ -89,7 +75,11 @@ const HomePage = async () => {
                     <ProgressBar />
                 </div>
                 <div className="leaderboard-sub">
-                    <LeaderboardSnip leaderboard={leaderboard} />
+                    <LeaderboardSnip/>
+                </div>
+
+                <div className="language-sub">
+                    <LanguageSelector />
                 </div>
             </StickyWrapper>
 

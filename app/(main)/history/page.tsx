@@ -1,9 +1,10 @@
-import { getUserTimedModeHistory, getUserInfiniteModeHistory } from "@/db/queries";
+import { getUserTimedModeHistory, getUserInfiniteModeHistory, getUserExamHistory } from "@/db/queries";
 import HistoryClient from "./HistoryClient";
 
 export default async function Page() {
   const userTimedModeHistory = await getUserTimedModeHistory() || []
   const userInfiniteModeHistory = await getUserInfiniteModeHistory() || []
+  const userExamHistory = await getUserExamHistory() || []
 
   const updatedUserTimedModeHistory = userTimedModeHistory.map(({ duration,...rest }) => ({
     type: duration,
@@ -18,7 +19,15 @@ export default async function Page() {
     ...rest,
   }));
 
-  const userModeHistory = [...updatedUserTimedModeHistory, ...updatedUserInfiniteModeHistory]
+  const updatedUserExamHistory = userExamHistory.map(({ exam_topic, score, ...rest }) => ({
+    type: exam_topic,
+    mode: "Exam",
+    topics_covered: undefined,
+    points: score,
+    ...rest,
+  }));
+
+  const userModeHistory = [...updatedUserTimedModeHistory, ...updatedUserInfiniteModeHistory, ...updatedUserExamHistory]
 
   return <HistoryClient userModeHistory={userModeHistory} />
 }

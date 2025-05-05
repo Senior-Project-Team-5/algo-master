@@ -36,9 +36,10 @@ export const Sidebar = ({ className }: Props) => {
         />
         <SidebarItem
           label="Infinite Mode"
-          href="/infinite-mode"
+          href="/infin-mode"
           iconSrc="infinite-mode.svg"
         />
+  
         <SidebarItem
           label="Leaderboard"
           href="/leaderboard"

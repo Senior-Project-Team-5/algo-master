@@ -5,8 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { motion, AnimatePresence } from "framer-motion";
-import { useRouter } from "next/navigation";
 import ResultsModal from "./ResultsModal";
+import { useRouter, useSearchParams } from 'next/navigation';
+
 
 interface MultipleChoice {
   choice: string;
@@ -22,21 +23,56 @@ interface QuizItem {
   code: string;
 }
 
-interface TimedQuizProps {
-  durationMinutes: number;
-  durationType: "FIVE_MINUTES" | "TEN_MINUTES" | "TWENTY_MINUTES";
+interface InfinQuizProps {
+  difficulty: string;
   onExit: () => void;
 }
 
-const TimedQuiz: React.FC<TimedQuizProps> = ({ 
-  durationMinutes, 
-  durationType,
+const levelTopics = {
+  Easy: [
+      "Arrays",
+      "Strings",
+      "Linked Lists",
+      "Complexities",
+      "Insertion Sort",
+      "Selection Sort",
+  ],
+  Medium: [
+      "Bubble Sort",
+      "Merge Sort",
+      "Quick Sort",
+      "Binary Search",
+      "Hash Tables",
+      "Stacks",
+      "Queues",
+  ],
+  Hard: [
+      "Trees",
+      "Heaps",
+      "Graphs",
+      "Breadth-First Search",
+      "Depth-First Search",
+      "Recursion",
+  ],
+  Expert: [
+      "Dijkstra's Algorithm",
+      "Bellman-Ford Algorithm",
+      "Greedy Algorithms",
+      "Topological Sort",
+      "Dynamic Programming",
+      "Backtracking",
+  ]
+}
+
+const InfinQuiz: React.FC<InfinQuizProps> = ({ 
+  difficulty,
   onExit 
 }) => {
-  const router = useRouter();
-  const [timeRemaining, setTimeRemaining] = useState(durationMinutes * 60);
-  const [isPaused, setIsPaused] = useState(false);
+  const topics =  levelTopics[difficulty as keyof typeof levelTopics];
+  
+
   const [isLoading, setIsLoading] = useState(true);
+  const [isPaused, setIsPaused] = useState(false);
   const [showResults, setShowResults] = useState(false);
   
   // Question data
@@ -49,50 +85,27 @@ const TimedQuiz: React.FC<TimedQuizProps> = ({
   // Stats tracking
   const [correctAnswers, setCorrectAnswers] = useState(0);
   const [incorrectAnswers, setIncorrectAnswers] = useState(0);
-  const [score, setScore] = useState(0);
+  const [score, setScore] = useState({ points: 0, correct: 0, incorrect: 0 });
   
   // Answer state
   const [isAnswered, setIsAnswered] = useState(false);
   const [selectedChoice, setSelectedChoice] = useState<string | null>(null);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
-  const [explanation, setExplanation] = useState<string | null>(null);
+  const [explanationText, setExplanationText] = useState<string | null>(null);
+
+  const [explanation, setExplanation] = useState(false);
   
   // Animation state
   const [showContent, setShowContent] = useState(true);
   const [showLoading, setShowLoading] = useState(false);
   const [direction, setDirection] = useState(1); // 1 for right, -1 for left
+
+  const [error, setError] = useState<string | null>(null);
+
   
-  // Timer interval ref
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
+ 
   const fetchingRef = useRef<boolean>(false);
 
-  // Format time as MM:SS
-  const formatTime = (seconds: number): string => {
-    const minutes = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-  };
-
-  // Timer countdown logic
-  useEffect(() => {
-    if (timeRemaining <= 0) {
-      // Time's up - show results
-      endQuiz();
-      return;
-    }
-
-    if (!isPaused) {
-      timerRef.current = setInterval(() => {
-        setTimeRemaining(prev => prev - 1);
-      }, 1000);
-    }
-
-    return () => {
-      if (timerRef.current) {
-        clearInterval(timerRef.current);
-      }
-    };
-  }, [timeRemaining, isPaused]);
 
   // Fetch first question on component mount
   useEffect(() => {
@@ -100,50 +113,50 @@ const TimedQuiz: React.FC<TimedQuizProps> = ({
   }, []);
 
   const fetchQuestion = async () => {
-    // Prevent duplicate API calls
-    if (fetchingRef.current) return;
-    
-    fetchingRef.current = true;
+    setIsLoading(true);
+    setSelectedChoice(null);
+    setExplanation(false);
+
     setIsPaused(true); // Pause timer while loading
     setIsLoading(true);
     setShowLoading(true); // Show loading screen
     setShowContent(false); // Hide content during loading
 
     try {
-      const response = await fetch("/api/timed-quiz", {
-        method: "POST",
+      // Choose a random topic from the list
+      const randomTopic = topics[Math.floor(Math.random() * topics.length)];
+      
+      const response = await fetch('/api/query', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          language
+          query: randomTopic,
+          language: language,
+          category: randomTopic,
         }),
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Failed to fetch question");
+        throw new Error('Failed to fetch question');
       }
 
       const data = await response.json();
-      const questionData = JSON.parse(data.answer);
       
-      // Add topic to list of covered topics if not already there
-      if (data.topicName && !topicsCovered.includes(data.topicName)) {
-        setTopicsCovered(prev => [...prev, data.topicName]);
-      }
+      // Parse the response which contains stringified JSON
+      const parsedData = JSON.parse(data.answer);
       
-      setCurrentQuestion(questionData);
-    } catch (error) {
-      console.error("Error fetching question:", error);
+      setCurrentQuestion(parsedData);
+    } catch (err) {
+      console.error('Error fetching question:', err);
+      setError('Failed to load question. Please try again.');
     } finally {
       // Hide loading and show content again
       setShowLoading(false);
       setShowContent(true);
       setIsLoading(false);
-      // Resume timer after loading completes
-      setIsPaused(false);
-      fetchingRef.current = false;
+
     }
   };
 
@@ -152,12 +165,15 @@ const TimedQuiz: React.FC<TimedQuizProps> = ({
     setSelectedChoice(choice);
     const correct = choice === currentQuestion?.answer;
     setIsCorrect(correct);
-    setExplanation(explanation);
+    setExplanationText(explanation);
 
     // Update stats
     if (correct) {
       setCorrectAnswers(prev => prev + 1);
-      setScore(prev => prev + 1);
+      setScore(prev => ({
+        ...prev,
+        points: prev.points + 1
+      }));
     } else {
       setIncorrectAnswers(prev => prev + 1);
     }
@@ -174,13 +190,12 @@ const TimedQuiz: React.FC<TimedQuizProps> = ({
     setTimeout(() => {
       setShowLoading(true);
       setIsLoading(true);
-      setIsPaused(true); // Pause timer while loading
 
       // Reset answer state
       setIsAnswered(false);
       setSelectedChoice(null);
       setIsCorrect(null);
-      setExplanation(null);
+      setExplanation(false);
 
       // Increment question counter
       setQuestionNumber(prev => prev + 1);
@@ -194,34 +209,35 @@ const TimedQuiz: React.FC<TimedQuizProps> = ({
   };
 
   const endQuiz = async () => {
-    // Pause timer
-    setIsPaused(true);
-    if (timerRef.current) {
-      clearInterval(timerRef.current);
-    }
-    
+    console.log(score.points)
+    console.log(difficulty)
+    console.log(correctAnswers)
+    console.log(incorrectAnswers)
+    console.log(language)
     try {
-      // Save results to database
-      await fetch("/api/timed-quiz/save", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          duration: durationType,
-          correct_answers: correctAnswers,
-          incorrect_answers: incorrectAnswers,
-          points: score,
-          topics_covered: topicsCovered
-        }),
-      });
-      
-      // Show results
-      setShowResults(true);
+        const response = await fetch("/api/infinite-mode/progress", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                points: score.points,
+                difficulty: difficulty,
+                correct: correctAnswers,
+                incorrect: incorrectAnswers,
+                language: language,
+            }),
+        });
+
+        if (!response.ok) {
+            console.log("API Fetch Failed to save progress");
+            throw new Error("API Fetch Failed to save progress");
+        }
+        setShowResults(true);
     } catch (error) {
-      console.error("Error saving results:", error);
+        console.log("Error saving user infinite mode progress:", error);
     }
-  };
+  }
 
   // Animation variants
   const contentVariants = {
@@ -265,25 +281,15 @@ const TimedQuiz: React.FC<TimedQuizProps> = ({
     },
   };
 
-  // Calculate time indicator color
-  const getTimeColor = () => {
-    const totalSeconds = durationMinutes * 60;
-    const percentRemaining = (timeRemaining / totalSeconds) * 100;
-    
-    if (percentRemaining > 50) return "text-green-600";
-    if (percentRemaining > 25) return "text-amber-500";
-    return "text-red-600";
-  };
 
   return (
     <div className="max-w-4xl mx-auto p-6">
       {/* Results Modal */}
       {showResults && (
         <ResultsModal
-          duration={durationMinutes}
           correctAnswers={correctAnswers}
           incorrectAnswers={incorrectAnswers}
-          score={score}
+          score={score.points}
           onClose={onExit}
         />
       )}
@@ -291,17 +297,12 @@ const TimedQuiz: React.FC<TimedQuizProps> = ({
       {/* Quiz Header with Timer and Exit Button */}
       <div className="flex justify-between items-center mb-4">
         <div className="flex items-center space-x-2">
-          <h2 className="text-xl font-bold">{durationMinutes} Minute Quiz</h2>
           <div className="px-3 py-1 bg-gray-100 rounded-full text-sm">
             Question {questionNumber}
           </div>
         </div>
         
         <div className="flex items-center space-x-4">
-          <div className={`text-lg font-mono font-bold ${getTimeColor()}`}>
-            <span className="inline-block mr-2">⏱️</span>
-            {formatTime(timeRemaining)}
-          </div>
           
           <Button
             variant="default"
@@ -324,7 +325,7 @@ const TimedQuiz: React.FC<TimedQuizProps> = ({
           </div>
         </div>
         <div>
-          <span className="font-medium">Score:</span> {score} points
+          <span className="font-medium">Score:</span> {score.points} points
         </div>
       </div>
 
@@ -343,9 +344,6 @@ const TimedQuiz: React.FC<TimedQuizProps> = ({
               <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mb-4"></div>
               <p className="text-gray-600 font-medium">
                 Generating Question...
-              </p>
-              <p className="text-sm text-gray-500 mt-2">
-                Timer is paused
               </p>
             </motion.div>
           )}
@@ -447,7 +445,7 @@ const TimedQuiz: React.FC<TimedQuizProps> = ({
 
         {/* Explanation Card (only visible after submission) */}
         <AnimatePresence mode="wait" custom={direction}>
-          {showContent && isAnswered && explanation && (
+          {showContent && isAnswered && explanationText && (
             <motion.div
               className="bg-white shadow-lg rounded-lg overflow-hidden mb-6"
               key={`explanation-${questionNumber}`}
@@ -461,7 +459,7 @@ const TimedQuiz: React.FC<TimedQuizProps> = ({
                 <h2 className="text-lg font-medium">Explanation</h2>
               </div>
               <div className="p-4">
-                <p className="mb-4">{explanation}</p>
+                <p className="mb-4">{explanationText}</p>
                 {currentQuestion?.resources && (
                   <div className="mt-4 text-sm text-gray-600">
                     <p className="font-medium">Resources:</p>
@@ -494,4 +492,4 @@ const TimedQuiz: React.FC<TimedQuizProps> = ({
   );
 };
 
-export default TimedQuiz;
+export default InfinQuiz;

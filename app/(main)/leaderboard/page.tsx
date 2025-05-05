@@ -157,7 +157,7 @@ const LeaderboardPage = () => {
                     <p className="text-red-500 mb-4">{error}</p>
                     <Button 
                       onClick={() => fetchLeaderboardData(currentLeaderboardType.id)} 
-                      variant="outline" 
+                      variant="primary" 
                       className="flex items-center gap-2"
                     >
                       <RotateCcw className="h-4 w-4" />
@@ -197,7 +197,7 @@ const LeaderboardPage = () => {
                           return (
                             <div key={user.userId} className={`flex flex-col items-center relative ${positionStyles[index]}`}>
                               <div className="relative">
-                                <Avatar className={`${avatarStyles[index]} ${user?.userId === user?.id ? 'ring-2 ring-blue-500' : ''}`}>
+                                <Avatar className={`${avatarStyles[index]} ${user?.userId === user?.userId ? 'ring-2 ring-blue-500' : ''}`}>
                                   <AvatarImage className="object-cover" src={user.userImageSrc} alt={user.userName} />
                                 </Avatar>
                                 {medals[index]}
