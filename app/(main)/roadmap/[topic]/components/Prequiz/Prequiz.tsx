@@ -4,18 +4,22 @@ interface Topic {
 
 const Prequiz: React.FC<Topic> = ({ topic }) => {
   return (
-    <div>
-      <h3>{decodeURIComponent(topic)}</h3>
+    <div className="container mx-auto py-8">
+      <h1 className="text-3xl text-[#2E588D] font-bold mb-6">{decodeURIComponent(topic)}</h1>
+      <p>
+        <br />
+        <br />
+        Each correct answer gives you +1 point, while incorrect answers result in -1 point.
+        <br />
+        <br />
 
-      <p>
+        The quiz will end once you have reached 10 points. 
         <br />
         <br />
-        The quiz will end once you have reached 10 points. Each correct answer gives you +1 point, while incorrect answers result in -1 point. Your score will always be between 0 and 10.
-      </p>
-      <p>
-        <br />
+
         Good Luck!
       </p>
+
     </div>
   );
 };

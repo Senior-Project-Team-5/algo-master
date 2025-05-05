@@ -127,7 +127,7 @@ const TimedModeCard: React.FC<TimedModeCardProps> = ({
       </CardContent>
       <CardFooter>
         <Button 
-          variant={isSelected ? "default" : "outline"} 
+          variant={isSelected ? "default" : "primary"} 
           className="w-full"
           onClick={onClick}
         >

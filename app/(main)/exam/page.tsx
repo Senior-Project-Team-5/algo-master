@@ -58,18 +58,12 @@ const examTopics = {
     ],
 }
 
-const languages = [
-    "Python",
-    "Java",
-    "C++",
-    "JavaScript",
-    "C#",
-]
-
 const ExamPage = () => {
     const router = useRouter();
-    const [selectedLanguage, setSelectedLanguage] = useState(languages[0]);
     const [selectedTopic, setSelectedTopic] = useState<string | null>(null);
+
+    const selectedLanguage = localStorage.getItem("language") || "python";
+
 
     const handleTopicClick = (topic: string) => {
         const topics = examTopics[topic as keyof typeof examTopics];
@@ -89,27 +83,6 @@ const ExamPage = () => {
             <div className="mb-8 text-center">
                 <h1 className="text-3xl text-[#2E588D] font-bold mb-2">Algorithm Mastery Exam</h1>
                 <p className="text-gray-600">Choose a topic and test your knowledge with curated exercises</p>
-            </div>
-
-            {/* Language selector */}
-            <div className="mb-8">
-                <div className="max-w-xs mx-auto">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Select Programming Language
-                    </label>
-                    <Select value={selectedLanguage} onValueChange={setSelectedLanguage}>
-                        <SelectTrigger>
-                            <SelectValue placeholder="Select language" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            {languages.map((lang) => (
-                                <SelectItem key={lang} value={lang}>
-                                    {lang}
-                                </SelectItem>
-                            ))}
-                        </SelectContent>
-                    </Select>
-                </div>
             </div>
 
             {/* Topics Grid */}

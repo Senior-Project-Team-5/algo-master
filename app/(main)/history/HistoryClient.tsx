@@ -43,7 +43,7 @@ export default function HistoryClient({ userModeHistory }: { userModeHistory: At
               <th className="px-6 py-3 text-left">Points</th>
               <th className="px-6 py-3 text-left">Accuracy</th>
               <th className="px-6 py-3 text-left">Topics</th>
-              <th className="px-6 py-3 text-left">Details</th>
+              {/*<th className="px-6 py-3 text-left">Details</th>*/}
             </tr>
           </thead>
           <tbody>
@@ -61,11 +61,11 @@ export default function HistoryClient({ userModeHistory }: { userModeHistory: At
                     ))}
                   </ul>
                 </td>
-                <td className="px-6 py-4">
+                {/*<td className="px-6 py-4">
                   <button onClick={() => openModal(task)}>
                     <ChevronRightIcon className="h-5 w-5 text-[#2E588D]" />
                   </button>
-                </td>
+                </td>*/}
               </tr>
             ))}
           </tbody>

@@ -94,22 +94,25 @@ const QuizClient: React.FC<QuizClientProps> = ({
 }) => {
   const [currentQuestion, setCurrentQuestion] = useState<QuizItem | null>(null);
   const [quizStatus, setQuizStatus] = useState<number>(0); // 0: not started, 1: start quiz, 2: ended quiz
-  const [language, setLanguage] = useState<string>("python");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const fetchingRef = useRef<boolean>(false);
+
+  const storedLanguage = localStorage.getItem("language") || "python";
+
 
   useEffect(() => {
     console.log("Raw topicParam:", topicParam);
     console.log("Decoded topicParam:", decodeURIComponent(topicParam));
   }, [topicParam]);
 
-  const fetchQuestion = async () => {
+  const fetchQuestion = async (language: string) => {
     // Prevent duplicate API calls
     if (fetchingRef.current) return;
 
     fetchingRef.current = true;
     setIsLoading(true);
 
+    console.log(language)
     try {
       const response = await fetch("/api/query", {
         method: "POST",
@@ -125,6 +128,7 @@ const QuizClient: React.FC<QuizClientProps> = ({
 
       const data = await response.json();
       const questionData = JSON.parse(data.answer);
+      console.log(questionData)
       setCurrentQuestion(questionData);
     } catch (error) {
       console.error("Error fetching question:", error);
@@ -134,10 +138,10 @@ const QuizClient: React.FC<QuizClientProps> = ({
     }
   };
 
-  // Runs when language changes
-  useEffect(() => {
-    fetchQuestion();
-  }, [language]);
+  useEffect(() => {  
+    fetchQuestion(storedLanguage);
+  }, []);
+
 
   const startQuiz = () => {
     if (currentQuestion) {
@@ -149,28 +153,6 @@ const QuizClient: React.FC<QuizClientProps> = ({
       {quizStatus == 0 && (
         <div>
           <Prequiz topic={topicParam} />
-          <Button
-            disabled={isLoading}
-            onClick={() => {
-              if (!isLoading) {
-                setCurrentQuestion(null);
-                setLanguage("C++");
-              }
-            }}
-          >
-            C++
-          </Button>
-          <Button
-            disabled={isLoading}
-            onClick={() => {
-              if (!isLoading) {
-                setCurrentQuestion(null);
-                setLanguage("Python");
-              }
-            }}
-          >
-            Python
-          </Button>
           <Button
             variant="primary"
             disabled={!currentQuestion || isLoading}
@@ -185,7 +167,7 @@ const QuizClient: React.FC<QuizClientProps> = ({
         <Quiz
           initialQuestion={currentQuestion}
           topic={topicParam}
-          language={language}
+          language={storedLanguage}
           topicID={topicID}
           initialPoints={initialPoints}
           numCorrectAnswer={numCorrectAnswer}
