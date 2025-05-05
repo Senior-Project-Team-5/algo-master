@@ -43,7 +43,7 @@ const TimedQuiz: React.FC<TimedQuizProps> = ({
   const [currentQuestion, setCurrentQuestion] = useState<QuizItem | null>(null);
   const [questionNumber, setQuestionNumber] = useState(1);
   const [topicsCovered, setTopicsCovered] = useState<string[]>([]);
-  const language = localStorage.getItem("language") || "python";
+  const [language, setLanguage] = useState("python");
 
   
   // Stats tracking
@@ -72,6 +72,13 @@ const TimedQuiz: React.FC<TimedQuizProps> = ({
     const secs = seconds % 60;
     return `${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
+
+  useEffect(() => {
+    const storedLanguage = localStorage.getItem("language");
+    if (storedLanguage) {
+      setLanguage(storedLanguage);
+    }
+  }, []);
 
   // Timer countdown logic
   useEffect(() => {

@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -61,9 +61,15 @@ const examTopics = {
 const ExamPage = () => {
     const router = useRouter();
     const [selectedTopic, setSelectedTopic] = useState<string | null>(null);
-
-    const selectedLanguage = localStorage.getItem("language") || "python";
-
+    const [selectedLanguage, setSelectedLanguage] = useState("python");
+    
+    // localStorage access into useEffect
+    useEffect(() => {
+        const storedLanguage = localStorage.getItem("language");
+        if (storedLanguage) {
+            setSelectedLanguage(storedLanguage);
+        }
+    }, []);
 
     const handleTopicClick = (topic: string) => {
         const topics = examTopics[topic as keyof typeof examTopics];

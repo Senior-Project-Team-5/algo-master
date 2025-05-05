@@ -96,23 +96,28 @@ const QuizClient: React.FC<QuizClientProps> = ({
   const [quizStatus, setQuizStatus] = useState<number>(0); // 0: not started, 1: start quiz, 2: ended quiz
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const fetchingRef = useRef<boolean>(false);
+  const [language, setLanguage] = useState("python");
 
-  const storedLanguage = localStorage.getItem("language") || "python";
-
+  useEffect(() => {
+    const storedLanguage = localStorage.getItem("language");
+    if (storedLanguage) {
+      setLanguage(storedLanguage);
+    }
+  }, []);
 
   useEffect(() => {
     console.log("Raw topicParam:", topicParam);
     console.log("Decoded topicParam:", decodeURIComponent(topicParam));
   }, [topicParam]);
 
-  const fetchQuestion = async (language: string) => {
+  const fetchQuestion = async (languageParam: string) => {
     // Prevent duplicate API calls
     if (fetchingRef.current) return;
 
     fetchingRef.current = true;
     setIsLoading(true);
 
-    console.log(language)
+    console.log(languageParam)
     try {
       const response = await fetch("/api/query", {
         method: "POST",
@@ -121,7 +126,7 @@ const QuizClient: React.FC<QuizClientProps> = ({
         },
         body: JSON.stringify({
           query: decodeURIComponent(topicParam),
-          language,
+          language: languageParam,
           category: topicCategory,
         }),
       });
@@ -139,15 +144,15 @@ const QuizClient: React.FC<QuizClientProps> = ({
   };
 
   useEffect(() => {  
-    fetchQuestion(storedLanguage);
-  }, []);
-
+    fetchQuestion(language);
+  }, [language]);
 
   const startQuiz = () => {
     if (currentQuestion) {
       setQuizStatus(1);
     }
   };
+  
   return (
     <>
       {quizStatus == 0 && (
@@ -167,7 +172,7 @@ const QuizClient: React.FC<QuizClientProps> = ({
         <Quiz
           initialQuestion={currentQuestion}
           topic={topicParam}
-          language={storedLanguage}
+          language={language}
           topicID={topicID}
           initialPoints={initialPoints}
           numCorrectAnswer={numCorrectAnswer}
