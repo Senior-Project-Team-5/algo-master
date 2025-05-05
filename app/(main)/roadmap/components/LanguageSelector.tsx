@@ -10,19 +10,25 @@ const languages = [
     "C#",
 ]
 
-
-
 const LanguageSelector = () =>{
-    const [selectedLanguage, setSelectedLanguage] = useState<string>(() => {
-        if (typeof window !== "undefined") {
-          return localStorage.getItem("language") || "Python";
-        }
-        return "Python"; 
-      });
+    const [selectedLanguage, setSelectedLanguage] = useState("Python");
+    const [isInitialized, setIsInitialized] = useState(false);
       
-      useEffect(() => {
+    // Initial load from localStorage - only runs once
+    useEffect(() => {
+      const storedLanguage = localStorage.getItem("language");
+      if (storedLanguage) {
+        setSelectedLanguage(storedLanguage);
+      }
+      setIsInitialized(true);
+    }, []);
+    
+    // Update localStorage when language changes, but only after initialization
+    useEffect(() => {
+      if (isInitialized) {
         localStorage.setItem("language", selectedLanguage);
-      }, [selectedLanguage]);
+      }
+    }, [selectedLanguage, isInitialized]);
 
     return(
         <div className="mb-8">

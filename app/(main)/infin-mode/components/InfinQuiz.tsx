@@ -79,7 +79,7 @@ const InfinQuiz: React.FC<InfinQuizProps> = ({
   const [currentQuestion, setCurrentQuestion] = useState<QuizItem | null>(null);
   const [questionNumber, setQuestionNumber] = useState(1);
   const [topicsCovered, setTopicsCovered] = useState<string[]>([]);
-  const language = localStorage.getItem("language") || "python";
+  const [language, setLanguage] = useState("python");
 
   
   // Stats tracking
@@ -106,6 +106,12 @@ const InfinQuiz: React.FC<InfinQuizProps> = ({
  
   const fetchingRef = useRef<boolean>(false);
 
+  useEffect(() => {
+    const storedLanguage = localStorage.getItem("language");
+    if (storedLanguage) {
+      setLanguage(storedLanguage);
+    }
+  }, []);
 
   // Fetch first question on component mount
   useEffect(() => {
