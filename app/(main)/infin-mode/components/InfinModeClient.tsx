@@ -152,7 +152,7 @@ const TimedModeClient = () => {
           onClick={() => setStartQuiz(true)}
           className="px-8 py-6 text-lg"
         >
-          Start Timed Quiz
+          Start Infinite Quiz
         </Button>
       </div>
     </div>
