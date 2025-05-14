@@ -6,6 +6,8 @@ import ProgressBar from "./components/ProgressBar";
 import { Separator } from "@/components/ui/seperator";
 import LeaderboardSnip from "./components/LeaderboardSnip";
 import LanguageSelector from "./components/LanguageSelector";
+import WelcomeBanner from "./components/welcomeBanner";
+
 
 import 'bootstrap/dist/css/bootstrap.css';
 import "../../globals.css";
@@ -62,7 +64,6 @@ const topicSections = [
 
 const HomePage = async () => {
 
-
     return ( 
         <div className="flex flex-row-reverse gap-[48px] px-6">
             <StickyWrapper>
@@ -70,6 +71,8 @@ const HomePage = async () => {
                     activeCourse="Linked Lists"
                     points={8}
                 />*/}
+                <WelcomeBanner/>
+
                 <div className="progress-sub">
                     <p className="font-bold text-progress">Your Progress</p>
                     <ProgressBar />
